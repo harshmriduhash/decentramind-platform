@@ -1,0 +1,286 @@
+'use client';
+
+import { 
+  createUmi, 
+  generateSigner, 
+  signerIdentity, 
+  createSignerFromKeypair,
+  keypairIdentity,
+  publicKey,
+  some,
+  none
+} from '@metaplex-foundation/umi';
+import { 
+  createNft,
+  findMetadataPda,
+  mplTokenMetadata,
+  updateNft,
+  verifyCollectionV1,
+  createCollectionNft
+} from '@metaplex-foundation/mpl-token-metadata';
+import { 
+  bundlrUploader,
+  createGenericFileFromBrowserFile,
+  createGenericFileFromJson
+} from '@metaplex-foundation/umi-bundle-defaults';
+import { Connection, Keypair, PublicKey, Transaction } from '@solana/web3.js';
+import { WalletAdapter } from '../hooks/useWallet';
+
+// NFT Minting Service
+export class NFTMintingService {
+  private umi: any;
+  private connection: Connection;
+  private wallet: WalletAdapter | null = null;
+
+  constructor() {
+    // Initialize UMI with Solana Devnet
+    this.umi = createUmi('https://api.devnet.solana.com')
+      .use(mplTokenMetadata())
+      .use(bundlrUploader({
+        address: 'https://devnet.bundlr.network',
+        providerUrl: 'https://api.devnet.solana.com',
+        timeout: 60000,
+      }));
+
+    this.connection = new Connection('https://api.devnet.solana.com', 'confirmed');
+  }
+
+  // Set wallet for signing transactions
+  setWallet(wallet: WalletAdapter) {
+    this.wallet = wallet;
+    if (wallet.publicKey) {
+      this.umi.use(signerIdentity(createSignerFromKeypair(this.umi, {
+        publicKey: wallet.publicKey,
+        secretKey: new Uint8Array(64) // Placeholder - actual signing handled by wallet
+      })));
+    }
+  }
+
+  // Create NFT metadata file
+  async createMetadataFile(metadata: any) {
+    try {
+      const metadataFile = createGenericFileFromJson(metadata);
+      const [metadataUri] = await this.umi.uploader.upload([metadataFile]);
+      return metadataUri;
+    } catch (error) {
+      console.error('Failed to upload metadata:', error);
+      throw new Error(`Failed to upload metadata: ${error.message}`);
+    }
+  }
+
+  // Mint Care Orchestrator NFT
+  async mintCareOrchestratorNFT(): Promise<{
+    mint: PublicKey;
+    metadata: PublicKey;
+    transaction: string;
+  }> {
+    if (!this.wallet || !this.wallet.publicKey) {
+      throw new Error('Wallet not connected');
+    }
+
+    try {
+      // Load NFT metadata
+      const metadata = await import('../data/nft-metadata.json');
+      
+      // Upload metadata to IPFS/Arweave
+      console.log('Uploading metadata...');
+      const metadataUri = await this.createMetadataFile(metadata.default);
+      console.log('Metadata uploaded to:', metadataUri);
+
+      // Generate mint keypair
+      const mint = generateSigner(this.umi);
+      
+      // Create NFT
+      console.log('Creating NFT...');
+      const createNftResult = await createNft(this.umi, {
+        mint,
+        name: metadata.default.name,
+        symbol: metadata.default.symbol,
+        uri: metadataUri,
+        sellerFeeBasisPoints: 500, // 5% royalty
+        creators: some([
+          {
+            address: this.wallet.publicKey,
+            verified: false,
+            share: 100,
+          },
+        ]),
+        collection: none(),
+        uses: none(),
+        isMutable: true,
+      }).sendAndConfirm(this.umi);
+
+      console.log('NFT created successfully!');
+      console.log('Mint address:', mint.publicKey);
+      console.log('Transaction signature:', createNftResult.signature);
+
+      // Find metadata PDA
+      const metadataPda = findMetadataPda(this.umi, {
+        mint: mint.publicKey,
+      });
+
+      return {
+        mint: mint.publicKey,
+        metadata: metadataPda[0],
+        transaction: createNftResult.signature
+      };
+
+    } catch (error) {
+      console.error('Failed to mint NFT:', error);
+      throw new Error(`Failed to mint NFT: ${error.message}`);
+    }
+  }
+
+  // Mint NFT with custom metadata
+  async mintCustomNFT(
+    name: string,
+    symbol: string,
+    description: string,
+    imageUri: string,
+    attributes: Array<{ trait_type: string; value: string }>,
+    royaltyBasisPoints: number = 500
+  ): Promise<{
+    mint: PublicKey;
+    metadata: PublicKey;
+    transaction: string;
+  }> {
+    if (!this.wallet || !this.wallet.publicKey) {
+      throw new Error('Wallet not connected');
+    }
+
+    try {
+      // Create custom metadata
+      const customMetadata = {
+        name,
+        symbol,
+        description,
+        image: imageUri,
+        external_url: "https://decentramind.com",
+        attributes,
+        properties: {
+          files: [
+            {
+              uri: imageUri,
+              type: "image/png"
+            }
+          ],
+          category: "image",
+          creators: [
+            {
+              address: this.wallet.publicKey.toString(),
+              verified: true,
+              share: 100
+            }
+          ]
+        }
+      };
+
+      // Upload metadata
+      console.log('Uploading custom metadata...');
+      const metadataUri = await this.createMetadataFile(customMetadata);
+      console.log('Custom metadata uploaded to:', metadataUri);
+
+      // Generate mint keypair
+      const mint = generateSigner(this.umi);
+      
+      // Create NFT
+      console.log('Creating custom NFT...');
+      const createNftResult = await createNft(this.umi, {
+        mint,
+        name,
+        symbol,
+        uri: metadataUri,
+        sellerFeeBasisPoints: royaltyBasisPoints,
+        creators: some([
+          {
+            address: this.wallet.publicKey,
+            verified: false,
+            share: 100,
+          },
+        ]),
+        collection: none(),
+        uses: none(),
+        isMutable: true,
+      }).sendAndConfirm(this.umi);
+
+      console.log('Custom NFT created successfully!');
+      console.log('Mint address:', mint.publicKey);
+      console.log('Transaction signature:', createNftResult.signature);
+
+      // Find metadata PDA
+      const metadataPda = findMetadataPda(this.umi, {
+        mint: mint.publicKey,
+      });
+
+      return {
+        mint: mint.publicKey,
+        metadata: metadataPda[0],
+        transaction: createNftResult.signature
+      };
+
+    } catch (error) {
+      console.error('Failed to mint custom NFT:', error);
+      throw new Error(`Failed to mint custom NFT: ${error.message}`);
+    }
+  }
+
+  // Get NFT metadata
+  async getNFTMetadata(mintAddress: PublicKey) {
+    try {
+      const metadataPda = findMetadataPda(this.umi, {
+        mint: mintAddress,
+      });
+
+      const metadata = await this.umi.rpc.getAccount(metadataPda[0]);
+      return metadata;
+    } catch (error) {
+      console.error('Failed to get NFT metadata:', error);
+      throw new Error(`Failed to get NFT metadata: ${error.message}`);
+    }
+  }
+
+  // Update NFT metadata
+  async updateNFTMetadata(
+    mintAddress: PublicKey,
+    newMetadata: any
+  ): Promise<string> {
+    if (!this.wallet || !this.wallet.publicKey) {
+      throw new Error('Wallet not connected');
+    }
+
+    try {
+      // Upload new metadata
+      const metadataUri = await this.createMetadataFile(newMetadata);
+      
+      // Update NFT
+      const updateResult = await updateNft(this.umi, {
+        mint: mintAddress,
+        name: newMetadata.name,
+        symbol: newMetadata.symbol,
+        uri: metadataUri,
+        sellerFeeBasisPoints: newMetadata.seller_fee_basis_points || 500,
+      }).sendAndConfirm(this.umi);
+
+      console.log('NFT metadata updated successfully!');
+      console.log('Transaction signature:', updateResult.signature);
+
+      return updateResult.signature;
+    } catch (error) {
+      console.error('Failed to update NFT metadata:', error);
+      throw new Error(`Failed to update NFT metadata: ${error.message}`);
+    }
+  }
+
+  // Check if wallet is connected
+  isWalletConnected(): boolean {
+    return this.wallet !== null && this.wallet.connected;
+  }
+
+  // Get wallet public key
+  getWalletPublicKey(): PublicKey | null {
+    return this.wallet?.publicKey || null;
+  }
+}
+
+// Export singleton instance
+export const nftMintingService = new NFTMintingService();

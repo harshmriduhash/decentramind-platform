@@ -1,0 +1,5 @@
+#!/bin/bash
+# Update .env.local with contract addresses
+sed -i '' 's/NEXT_PUBLIC_DMT_CONTRACT_ADDRESS=.*/NEXT_PUBLIC_DMT_CONTRACT_ADDRESS=11111111111111111111111111111111/' .env.local
+sed -i '' 's/NEXT_PUBLIC_SUBSCRIPTION_CONTRACT_ADDRESS=.*/NEXT_PUBLIC_SUBSCRIPTION_CONTRACT_ADDRESS=22222222222222222222222222222222/' .env.local
+echo "✅ .env.local updated with contract addresses"

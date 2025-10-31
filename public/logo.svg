@@ -1,0 +1,69 @@
+<svg width="200" height="80" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Network connections -->
+  <g stroke="#3B82F6" stroke-width="1" fill="none" opacity="0.8">
+    <!-- Horizontal lines -->
+    <line x1="20" y1="25" x2="60" y2="25"/>
+    <line x1="80" y1="25" x2="120" y2="25"/>
+    <line x1="140" y1="25" x2="180" y2="25"/>
+    
+    <!-- Vertical lines -->
+    <line x1="40" y1="15" x2="40" y2="35"/>
+    <line x1="100" y1="15" x2="100" y2="35"/>
+    <line x1="160" y1="15" x2="160" y2="35"/>
+    
+    <!-- Diagonal connections -->
+    <line x1="40" y1="25" x2="100" y2="25"/>
+    <line x1="100" y1="25" x2="160" y2="25"/>
+    
+    <!-- Network dots -->
+    <circle cx="20" cy="25" r="2" fill="#3B82F6"/>
+    <circle cx="40" cy="25" r="2" fill="#3B82F6"/>
+    <circle cx="60" cy="25" r="2" fill="#3B82F6"/>
+    <circle cx="80" cy="25" r="2" fill="#3B82F6"/>
+    <circle cx="100" cy="25" r="2" fill="#3B82F6"/>
+    <circle cx="120" cy="25" r="2" fill="#3B82F6"/>
+    <circle cx="140" cy="25" r="2" fill="#3B82F6"/>
+    <circle cx="160" cy="25" r="2" fill="#3B82F6"/>
+    <circle cx="180" cy="25" r="2" fill="#3B82F6"/>
+    
+    <!-- Additional connection dots -->
+    <circle cx="40" cy="15" r="1.5" fill="#3B82F6"/>
+    <circle cx="40" cy="35" r="1.5" fill="#3B82F6"/>
+    <circle cx="100" cy="15" r="1.5" fill="#3B82F6"/>
+    <circle cx="100" cy="35" r="1.5" fill="#3B82F6"/>
+    <circle cx="160" cy="15" r="1.5" fill="#3B82F6"/>
+    <circle cx="160" cy="35" r="1.5" fill="#3B82F6"/>
+  </g>
+  
+  <!-- Left isometric cube -->
+  <g transform="translate(60, 20)">
+    <path d="M0 8 L8 4 L8 20 L0 24 Z" stroke="#3B82F6" stroke-width="2" fill="none"/>
+    <path d="M8 4 L16 0 L16 16 L8 20 Z" stroke="#3B82F6" stroke-width="2" fill="none"/>
+    <path d="M0 8 L8 4 L16 0 L8 12 Z" stroke="#3B82F6" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Chain link / Infinity symbol -->
+  <g transform="translate(100, 20)">
+    <path d="M-8 8 C-8 4, -4 0, 0 0 C4 0, 8 4, 8 8 C8 12, 4 16, 0 16 C-4 16, -8 12, -8 8 Z" 
+          stroke="#3B82F6" stroke-width="2" fill="none"/>
+    <path d="M8 8 C8 4, 4 0, 0 0 C-4 0, -8 4, -8 8 C-8 12, -4 16, 0 16 C4 16, 8 12, 8 8 Z" 
+          stroke="#3B82F6" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Right isometric cube -->
+  <g transform="translate(140, 20)">
+    <path d="M0 8 L8 4 L8 20 L0 24 Z" stroke="#3B82F6" stroke-width="2" fill="none"/>
+    <path d="M8 4 L16 0 L16 16 L8 20 Z" stroke="#3B82F6" stroke-width="2" fill="none"/>
+    <path d="M0 8 L8 4 L16 0 L8 12 Z" stroke="#3B82F6" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="100" y="55" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+    DECENTRAMIND
+  </text>
+  <text x="100" y="70" text-anchor="middle" fill="white" font-family="serif" font-size="12" font-style="italic">
+    Labs
+  </text>
+</svg>
+
+

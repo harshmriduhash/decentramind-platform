@@ -1,0 +1,5 @@
+{
+    "programId": "11111111111111111111111111111111",
+    "network": "devnet",
+    "rpcEndpoint": "https://api.devnet.solana.com"
+}

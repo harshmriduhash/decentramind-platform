@@ -1,0 +1,10 @@
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/agent/target/release/deps/libbs58-9e1aac7b8f621284.rmeta: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/alphabet.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/decode.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/encode.rs
+
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/agent/target/release/deps/libbs58-9e1aac7b8f621284.rlib: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/alphabet.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/decode.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/encode.rs
+
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/agent/target/release/deps/bs58-9e1aac7b8f621284.d: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/alphabet.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/decode.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/encode.rs
+
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/lib.rs:
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/alphabet.rs:
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/decode.rs:
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/bs58-0.4.0/src/encode.rs:

@@ -1,0 +1,10 @@
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/target/sbpf-solana-solana/release/deps/liblog-80f82234b70afd4f.rmeta: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/macros.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/serde.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/__private_api.rs
+
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/target/sbpf-solana-solana/release/deps/liblog-80f82234b70afd4f.rlib: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/macros.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/serde.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/__private_api.rs
+
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/target/sbpf-solana-solana/release/deps/log-80f82234b70afd4f.d: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/macros.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/serde.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/__private_api.rs
+
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/lib.rs:
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/macros.rs:
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/serde.rs:
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.27/src/__private_api.rs:

@@ -1,0 +1,606 @@
+{
+    "name": "Autonomous CFO - Audit Workflow",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "audit",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "webhook-trigger",
+            "name": "Audit Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ],
+            "webhookId": "audit-webhook"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.companyId }}",
+                            "operation": "isNotEmpty"
+                        }
+                    ]
+                }
+            },
+            "id": "validate-input",
+            "name": "Validate Input",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://api.accounting-system.com/companies/{{ $json.companyId }}/financials",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "options": {
+                    "headers": {
+                        "Authorization": "Bearer {{ $credentials.accountingApiKey }}"
+                    }
+                }
+            },
+            "id": "fetch-financial-data",
+            "name": "Fetch Financial Data",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                680,
+                200
+            ],
+            "credentials": {
+                "accountingApi": {
+                    "id": "accounting-credentials",
+                    "name": "Accounting API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "https://api.banking-system.com/accounts/{{ $json.companyId }}/transactions",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "options": {
+                    "headers": {
+                        "Authorization": "Bearer {{ $credentials.bankingApiKey }}"
+                    }
+                }
+            },
+            "id": "fetch-banking-data",
+            "name": "Fetch Banking Data",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                680,
+                400
+            ],
+            "credentials": {
+                "bankingApi": {
+                    "id": "banking-credentials",
+                    "name": "Banking API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "model": "gpt-4",
+                "messages": {
+                    "values": [
+                        {
+                            "role": "system",
+                            "content": "You are a financial AI auditor. Analyze the provided financial and banking data to identify discrepancies, anomalies, and compliance issues. Provide detailed audit findings and recommendations."
+                        },
+                        {
+                            "role": "user",
+                            "content": "Financial Data: {{ $('Fetch Financial Data').item.json }}\nBanking Data: {{ $('Fetch Banking Data').item.json }}\nAudit Period: {{ $json.auditPeriod }}\nCompany: {{ $json.companyId }}"
+                        }
+                    ]
+                },
+                "options": {
+                    "temperature": 0.2,
+                    "maxTokens": 2000
+                }
+            },
+            "id": "ai-audit-analysis",
+            "name": "AI Audit Analysis",
+            "type": "n8n-nodes-base.openAi",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ],
+            "credentials": {
+                "openAiApi": {
+                    "id": "openai-credentials",
+                    "name": "OpenAI API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.riskLevel }}",
+                            "operation": "equal",
+                            "value2": "high"
+                        }
+                    ]
+                }
+            },
+            "id": "check-risk-level",
+            "name": "High Risk?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                1120,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://api.regulatory-system.com/compliance/check",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "companyId",
+                            "value": "={{ $json.companyId }}"
+                        },
+                        {
+                            "name": "auditFindings",
+                            "value": "={{ $('AI Audit Analysis').item.json.findings }}"
+                        },
+                        {
+                            "name": "riskLevel",
+                            "value": "={{ $json.riskLevel }}"
+                        }
+                    ]
+                },
+                "options": {
+                    "headers": {
+                        "Authorization": "Bearer {{ $credentials.regulatoryApiKey }}"
+                    }
+                }
+            },
+            "id": "regulatory-compliance-check",
+            "name": "Regulatory Compliance Check",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1340,
+                200
+            ],
+            "credentials": {
+                "regulatoryApi": {
+                    "id": "regulatory-credentials",
+                    "name": "Regulatory API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "https://api.solana.com/v1/transactions",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "to",
+                            "value": "={{ $json.walletAddress }}"
+                        },
+                        {
+                            "name": "amount",
+                            "value": "={{ $json.auditFee || 50 }}"
+                        },
+                        {
+                            "name": "memo",
+                            "value": "Audit Processing Fee"
+                        }
+                    ]
+                },
+                "options": {
+                    "headers": {
+                        "Authorization": "Bearer {{ $credentials.solanaApiKey }}"
+                    }
+                }
+            },
+            "id": "process-dmt-payment",
+            "name": "Process DMT Payment",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1560,
+                200
+            ],
+            "credentials": {
+                "solanaApi": {
+                    "id": "solana-credentials",
+                    "name": "Solana API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "https://api.document-generation.com/reports/audit",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "companyId",
+                            "value": "={{ $json.companyId }}"
+                        },
+                        {
+                            "name": "auditFindings",
+                            "value": "={{ $('AI Audit Analysis').item.json.findings }}"
+                        },
+                        {
+                            "name": "recommendations",
+                            "value": "={{ $('AI Audit Analysis').item.json.recommendations }}"
+                        },
+                        {
+                            "name": "complianceStatus",
+                            "value": "={{ $('Regulatory Compliance Check').item.json.status }}"
+                        },
+                        {
+                            "name": "auditor",
+                            "value": "Autonomous CFO AI"
+                        }
+                    ]
+                },
+                "options": {
+                    "headers": {
+                        "Authorization": "Bearer {{ $credentials.documentApiKey }}"
+                    }
+                }
+            },
+            "id": "generate-audit-report",
+            "name": "Generate Audit Report",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1780,
+                200
+            ],
+            "credentials": {
+                "documentApi": {
+                    "id": "document-credentials",
+                    "name": "Document API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "https://api.solana.com/v1/attestations",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "data",
+                            "value": "={{ $('AI Audit Analysis').item.json.findings }}"
+                        },
+                        {
+                            "name": "attestor",
+                            "value": "={{ $json.walletAddress }}"
+                        },
+                        {
+                            "name": "type",
+                            "value": "audit_report"
+                        }
+                    ]
+                },
+                "options": {
+                    "headers": {
+                        "Authorization": "Bearer {{ $credentials.solanaApiKey }}"
+                    }
+                }
+            },
+            "id": "create-on-chain-attestation",
+            "name": "Create On-Chain Attestation",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                2000,
+                200
+            ],
+            "credentials": {
+                "solanaApi": {
+                    "id": "solana-credentials",
+                    "name": "Solana API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "https://api.discord.com/v10/channels/{{ $json.discordChannelId }}/messages",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "content",
+                            "value": "🔍 **Audit Report Generated**\n\nCompany: {{ $json.companyId }}\nRisk Level: {{ $json.riskLevel }}\nFindings: {{ $('AI Audit Analysis').item.json.findingsCount }}\nReport: {{ $('Generate Audit Report').item.json.reportUrl }}\nAttestation: {{ $('Create On-Chain Attestation').item.json.attestationId }}"
+                        }
+                    ]
+                },
+                "options": {
+                    "headers": {
+                        "Authorization": "Bot {{ $credentials.discordBotToken }}"
+                    }
+                }
+            },
+            "id": "send-discord-notification",
+            "name": "Send Discord Notification",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                2220,
+                200
+            ],
+            "credentials": {
+                "discordApi": {
+                    "id": "discord-credentials",
+                    "name": "Discord API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "collection": "audit_reports",
+                "fields": {
+                    "companyId": "={{ $json.companyId }}",
+                    "auditFindings": "={{ $('AI Audit Analysis').item.json.findings }}",
+                    "recommendations": "={{ $('AI Audit Analysis').item.json.recommendations }}",
+                    "riskLevel": "={{ $json.riskLevel }}",
+                    "complianceStatus": "={{ $('Regulatory Compliance Check').item.json.status }}",
+                    "reportUrl": "={{ $('Generate Audit Report').item.json.reportUrl }}",
+                    "attestationId": "={{ $('Create On-Chain Attestation').item.json.attestationId }}",
+                    "dmtTransaction": "={{ $('Process DMT Payment').item.json.signature }}",
+                    "timestamp": "={{ new Date().toISOString() }}",
+                    "walletAddress": "={{ $json.walletAddress }}"
+                }
+            },
+            "id": "log-to-mongodb",
+            "name": "Log to MongoDB",
+            "type": "n8n-nodes-base.mongoDb",
+            "typeVersion": 1,
+            "position": [
+                2440,
+                200
+            ],
+            "credentials": {
+                "mongoDb": {
+                    "id": "mongodb-credentials",
+                    "name": "MongoDB Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ {\n  \"success\": true,\n  \"auditId\": $('Generate Audit Report').item.json.auditId,\n  \"riskLevel\": $json.riskLevel,\n  \"findingsCount\": $('AI Audit Analysis').item.json.findingsCount,\n  \"reportUrl\": $('Generate Audit Report').item.json.reportUrl,\n  \"attestationId\": $('Create On-Chain Attestation').item.json.attestationId,\n  \"dmtTransaction\": $('Process DMT Payment').item.json.signature,\n  \"timestamp\": new Date().toISOString()\n} }}"
+            },
+            "id": "success-response",
+            "name": "Success Response",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                2660,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ {\n  \"success\": true,\n  \"auditId\": $('Generate Audit Report').item.json.auditId,\n  \"riskLevel\": $json.riskLevel,\n  \"findingsCount\": $('AI Audit Analysis').item.json.findingsCount,\n  \"reportUrl\": $('Generate Audit Report').item.json.reportUrl,\n  \"message\": \"Low risk audit completed\",\n  \"timestamp\": new Date().toISOString()\n} }}"
+            },
+            "id": "low-risk-response",
+            "name": "Low Risk Response",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1340,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ {\n  \"success\": false,\n  \"error\": \"Invalid input data\",\n  \"message\": \"Company ID is required\",\n  \"timestamp\": new Date().toISOString()\n} }}"
+            },
+            "id": "error-response",
+            "name": "Error Response",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                680,
+                500
+            ]
+        }
+    ],
+    "connections": {
+        "Audit Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Validate Input",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Validate Input": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Financial Data",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Fetch Banking Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Error Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Financial Data": {
+            "main": [
+                [
+                    {
+                        "node": "AI Audit Analysis",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Banking Data": {
+            "main": [
+                [
+                    {
+                        "node": "AI Audit Analysis",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Audit Analysis": {
+            "main": [
+                [
+                    {
+                        "node": "High Risk?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "High Risk?": {
+            "main": [
+                [
+                    {
+                        "node": "Regulatory Compliance Check",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Low Risk Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Regulatory Compliance Check": {
+            "main": [
+                [
+                    {
+                        "node": "Process DMT Payment",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Process DMT Payment": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Audit Report",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Audit Report": {
+            "main": [
+                [
+                    {
+                        "node": "Create On-Chain Attestation",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Create On-Chain Attestation": {
+            "main": [
+                [
+                    {
+                        "node": "Send Discord Notification",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Discord Notification": {
+            "main": [
+                [
+                    {
+                        "node": "Log to MongoDB",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Log to MongoDB": {
+            "main": [
+                [
+                    {
+                        "node": "Success Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": true,
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "versionId": "1",
+    "meta": {
+        "templateCredsSetupCompleted": true
+    },
+    "id": "cfo-audit-workflow",
+    "tags": [
+        "finance",
+        "audit",
+        "autonomous-cfo"
+    ]
+}

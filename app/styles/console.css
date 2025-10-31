@@ -1,0 +1,156 @@
+/* AI Console Specific Styles */
+.ai-console {
+    background: linear-gradient(135deg, #0f172a 0%, #581c87 50%, #0f172a 100%);
+}
+
+.ai-console-glow {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.ai-console-particle {
+    background: radial-gradient(circle at 50% 50%, rgba(120, 119, 198, 0.1), transparent 50%);
+}
+
+/* Agent Card Animations */
+.agent-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.agent-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* XP Bar Glow Effect */
+.xp-bar-glow {
+    background: linear-gradient(90deg, #10b981, #06b6d4);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Mood Tracker Styles */
+.mood-option {
+    transition: all 0.2s ease-in-out;
+}
+
+.mood-option:hover {
+    transform: scale(1.05);
+}
+
+.mood-option.selected {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Task Status Indicators */
+.task-completed {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.task-in-progress {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.task-failed {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.task-pending {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+/* Insight Panel Styles */
+.insight-tip {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+}
+
+.insight-forecast {
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+}
+
+.insight-warning {
+    background: linear-gradient(135deg, #ef4444, #f97316);
+}
+
+.insight-achievement {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+/* Custom Scrollbar */
+.ai-console-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ai-console-scrollbar::-webkit-scrollbar-track {
+    background: rgba(30, 41, 59, 0.3);
+    border-radius: 3px;
+}
+
+.ai-console-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 3px;
+}
+
+.ai-console-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .ai-console-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ai-console-sidebar {
+        display: none;
+    }
+}
+
+/* Animation Keyframes */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(139, 92, 246, 0.6);
+    }
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Apply animations */
+.ai-console-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.ai-console-glow-animate {
+    animation: glow 2s ease-in-out infinite;
+}
+
+.ai-console-pulse {
+    animation: pulse-glow 2s ease-in-out infinite;
+}

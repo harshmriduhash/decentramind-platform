@@ -1,0 +1,10 @@
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/target/release/deps/libautocfg-ed54ff97aa12660c.rmeta: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/error.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/rustc.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/version.rs
+
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/target/release/deps/libautocfg-ed54ff97aa12660c.rlib: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/error.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/rustc.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/version.rs
+
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/target/release/deps/autocfg-ed54ff97aa12660c.d: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/error.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/rustc.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/version.rs
+
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/lib.rs:
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/error.rs:
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/rustc.rs:
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.4.0/src/version.rs:

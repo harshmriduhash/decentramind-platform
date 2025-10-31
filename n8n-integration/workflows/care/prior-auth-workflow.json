@@ -1,0 +1,500 @@
+{
+    "name": "Care Orchestrator - Prior Authorization Workflow",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "prior-auth",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "webhook-trigger",
+            "name": "Prior Auth Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ],
+            "webhookId": "prior-auth-webhook"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.patientId }}",
+                            "operation": "isNotEmpty"
+                        }
+                    ]
+                }
+            },
+            "id": "validate-input",
+            "name": "Validate Input",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://api.ehr-system.com/patients/{{ $json.patientId }}",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "options": {
+                    "headers": {
+                        "Authorization": "Bearer {{ $credentials.ehrApiKey }}"
+                    }
+                }
+            },
+            "id": "fetch-patient-data",
+            "name": "Fetch Patient Data",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                680,
+                200
+            ],
+            "credentials": {
+                "ehrApi": {
+                    "id": "ehr-credentials",
+                    "name": "EHR API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "https://api.insurance-provider.com/prior-auth/check",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "patientId",
+                            "value": "={{ $json.patientId }}"
+                        },
+                        {
+                            "name": "procedureCode",
+                            "value": "={{ $json.procedureCode }}"
+                        },
+                        {
+                            "name": "diagnosisCode",
+                            "value": "={{ $json.diagnosisCode }}"
+                        }
+                    ]
+                },
+                "options": {
+                    "headers": {
+                        "Authorization": "Bearer {{ $credentials.insuranceApiKey }}"
+                    }
+                }
+            },
+            "id": "check-insurance",
+            "name": "Check Insurance Coverage",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                900,
+                200
+            ],
+            "credentials": {
+                "insuranceApi": {
+                    "id": "insurance-credentials",
+                    "name": "Insurance API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "model": "gpt-4",
+                "messages": {
+                    "values": [
+                        {
+                            "role": "system",
+                            "content": "You are a healthcare AI assistant specializing in prior authorization requests. Analyze the patient data and insurance response to determine if prior authorization is needed and provide recommendations."
+                        },
+                        {
+                            "role": "user",
+                            "content": "Patient Data: {{ $('Fetch Patient Data').item.json }}\nInsurance Response: {{ $('Check Insurance Coverage').item.json }}\nRequested Procedure: {{ $json.procedureCode }}\nDiagnosis: {{ $json.diagnosisCode }}"
+                        }
+                    ]
+                },
+                "options": {
+                    "temperature": 0.3,
+                    "maxTokens": 1000
+                }
+            },
+            "id": "ai-analysis",
+            "name": "AI Analysis",
+            "type": "n8n-nodes-base.openAi",
+            "typeVersion": 1,
+            "position": [
+                1120,
+                200
+            ],
+            "credentials": {
+                "openAiApi": {
+                    "id": "openai-credentials",
+                    "name": "OpenAI API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.requiresPriorAuth }}",
+                            "operation": "equal",
+                            "value2": "true"
+                        }
+                    ]
+                }
+            },
+            "id": "check-prior-auth-needed",
+            "name": "Prior Auth Needed?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                1340,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://api.insurance-provider.com/prior-auth/submit",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "patientId",
+                            "value": "={{ $json.patientId }}"
+                        },
+                        {
+                            "name": "procedureCode",
+                            "value": "={{ $json.procedureCode }}"
+                        },
+                        {
+                            "name": "diagnosisCode",
+                            "value": "={{ $json.diagnosisCode }}"
+                        },
+                        {
+                            "name": "clinicalNotes",
+                            "value": "={{ $('AI Analysis').item.json.analysis }}"
+                        }
+                    ]
+                },
+                "options": {
+                    "headers": {
+                        "Authorization": "Bearer {{ $credentials.insuranceApiKey }}"
+                    }
+                }
+            },
+            "id": "submit-prior-auth",
+            "name": "Submit Prior Auth",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1560,
+                100
+            ],
+            "credentials": {
+                "insuranceApi": {
+                    "id": "insurance-credentials",
+                    "name": "Insurance API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "https://api.solana.com/v1/transactions",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "to",
+                            "value": "={{ $json.walletAddress }}"
+                        },
+                        {
+                            "name": "amount",
+                            "value": "10"
+                        },
+                        {
+                            "name": "memo",
+                            "value": "Prior Auth Processing Fee"
+                        }
+                    ]
+                },
+                "options": {
+                    "headers": {
+                        "Authorization": "Bearer {{ $credentials.solanaApiKey }}"
+                    }
+                }
+            },
+            "id": "process-dmt-payment",
+            "name": "Process DMT Payment",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1780,
+                100
+            ],
+            "credentials": {
+                "solanaApi": {
+                    "id": "solana-credentials",
+                    "name": "Solana API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "https://api.telegram.org/bot{{ $credentials.telegramBotToken }}/sendMessage",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "chat_id",
+                            "value": "={{ $json.telegramChatId }}"
+                        },
+                        {
+                            "name": "text",
+                            "value": "🏥 Prior Authorization Request Submitted\n\nPatient: {{ $json.patientId }}\nProcedure: {{ $json.procedureCode }}\nStatus: {{ $('Submit Prior Auth').item.json.status }}\nDMT Payment: {{ $('Process DMT Payment').item.json.signature }}"
+                        }
+                    ]
+                }
+            },
+            "id": "send-notification",
+            "name": "Send Notification",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                2000,
+                100
+            ],
+            "credentials": {
+                "telegramApi": {
+                    "id": "telegram-credentials",
+                    "name": "Telegram API Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "collection": "prior_auth_requests",
+                "fields": {
+                    "patientId": "={{ $json.patientId }}",
+                    "procedureCode": "={{ $json.procedureCode }}",
+                    "diagnosisCode": "={{ $json.diagnosisCode }}",
+                    "status": "={{ $('Submit Prior Auth').item.json.status }}",
+                    "dmtTransaction": "={{ $('Process DMT Payment').item.json.signature }}",
+                    "timestamp": "={{ new Date().toISOString() }}",
+                    "walletAddress": "={{ $json.walletAddress }}"
+                }
+            },
+            "id": "log-to-mongodb",
+            "name": "Log to MongoDB",
+            "type": "n8n-nodes-base.mongoDb",
+            "typeVersion": 1,
+            "position": [
+                2220,
+                100
+            ],
+            "credentials": {
+                "mongoDb": {
+                    "id": "mongodb-credentials",
+                    "name": "MongoDB Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ {\n  \"success\": true,\n  \"priorAuthId\": $('Submit Prior Auth').item.json.priorAuthId,\n  \"status\": $('Submit Prior Auth').item.json.status,\n  \"dmtTransaction\": $('Process DMT Payment').item.json.signature,\n  \"timestamp\": new Date().toISOString()\n} }}"
+            },
+            "id": "success-response",
+            "name": "Success Response",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                2440,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ {\n  \"success\": false,\n  \"error\": \"No prior authorization needed\",\n  \"message\": \"Procedure is covered under current insurance plan\",\n  \"timestamp\": new Date().toISOString()\n} }}"
+            },
+            "id": "no-auth-needed-response",
+            "name": "No Auth Needed Response",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1560,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ {\n  \"success\": false,\n  \"error\": \"Invalid input data\",\n  \"message\": \"Patient ID is required\",\n  \"timestamp\": new Date().toISOString()\n} }}"
+            },
+            "id": "error-response",
+            "name": "Error Response",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                680,
+                400
+            ]
+        }
+    ],
+    "connections": {
+        "Prior Auth Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Validate Input",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Validate Input": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Patient Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Error Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Patient Data": {
+            "main": [
+                [
+                    {
+                        "node": "Check Insurance Coverage",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Insurance Coverage": {
+            "main": [
+                [
+                    {
+                        "node": "AI Analysis",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Analysis": {
+            "main": [
+                [
+                    {
+                        "node": "Prior Auth Needed?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prior Auth Needed?": {
+            "main": [
+                [
+                    {
+                        "node": "Submit Prior Auth",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "No Auth Needed Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Submit Prior Auth": {
+            "main": [
+                [
+                    {
+                        "node": "Process DMT Payment",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Process DMT Payment": {
+            "main": [
+                [
+                    {
+                        "node": "Send Notification",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Notification": {
+            "main": [
+                [
+                    {
+                        "node": "Log to MongoDB",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Log to MongoDB": {
+            "main": [
+                [
+                    {
+                        "node": "Success Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": true,
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "versionId": "1",
+    "meta": {
+        "templateCredsSetupCompleted": true
+    },
+    "id": "care-prior-auth-workflow",
+    "tags": [
+        "healthcare",
+        "prior-auth",
+        "care-orchestrator"
+    ]
+}

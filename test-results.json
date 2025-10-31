@@ -1,0 +1,37 @@
+{
+  "firebase": {
+    "status": "completed",
+    "bugs": [],
+    "fixes": []
+  },
+  "agentMinting": {
+    "status": "completed",
+    "bugs": [],
+    "fixes": []
+  },
+  "staking": {
+    "status": "completed",
+    "bugs": [],
+    "fixes": []
+  },
+  "governance": {
+    "status": "completed",
+    "bugs": [],
+    "fixes": []
+  },
+  "chat": {
+    "status": "completed",
+    "bugs": [],
+    "fixes": []
+  },
+  "learning": {
+    "status": "completed",
+    "bugs": [],
+    "fixes": []
+  },
+  "ui": {
+    "status": "completed",
+    "bugs": [],
+    "fixes": []
+  }
+}

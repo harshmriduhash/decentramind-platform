@@ -1,0 +1,9 @@
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/target/release/deps/libspl_discriminator_syn-bbf2615d8a79e5bf.rmeta: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/error.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/parser.rs
+
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/target/release/deps/libspl_discriminator_syn-bbf2615d8a79e5bf.rlib: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/error.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/parser.rs
+
+/Users/davidbonillajaylen2022/DecentraMind/onchain/programs/target/release/deps/spl_discriminator_syn-bbf2615d8a79e5bf.d: /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/lib.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/error.rs /Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/parser.rs
+
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/lib.rs:
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/error.rs:
+/Users/davidbonillajaylen2022/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spl-discriminator-syn-0.1.2/src/parser.rs:
