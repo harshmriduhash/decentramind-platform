@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🧠 DecentraMind - ADHD-Friendly AI-Powered Productivity & Wellness Ecosystem
 
 > **"Swiss Army of AI Agents"** - A decentralized platform for AI agent management, productivity tracking, and wellness optimization with Solana blockchain integration.
