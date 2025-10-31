@@ -1,11 +1,13 @@
-<<<<<<< HEAD
 # Dependencies
 /node_modules
 /.pnp
 .pnp.js
+jspm_packages/
 
 # Testing
 /coverage
+*.lcov
+.nyc_output
 
 # Next.js
 /.next/
@@ -13,28 +15,16 @@
 
 # Production
 /build
+build/Release
 
-# Misc
-.DS_Store
-*.pem
-
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Local env files
+# Environment variables
 .env
+.env.local
+.env.*.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# VS Code
-.vscode/
-
-# Solana
-/test-ledger 
-=======
 # Logs
 logs
 *.log
