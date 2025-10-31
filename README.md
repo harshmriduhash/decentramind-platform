@@ -160,7 +160,7 @@ DecentraMind/
 
 1. **Clone the repository**:
 ```bash
-git clone https://github.com/harshmriduhash/decentramind.git
+git clone https://github.com/harshmriduhash/decentramind-platform.git
 cd decentramind
 ```
 
