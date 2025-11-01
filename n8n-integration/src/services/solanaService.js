@@ -12,7 +12,7 @@ export class SolanaService {
     this.connection = null;
     this.network = process.env.SOLANA_NETWORK || 'devnet';
     this.rpcEndpoint = this.getRpcEndpoint();
-    
+
     this.logger = winston.createLogger({
       level: 'info',
       format: winston.format.combine(
@@ -66,10 +66,10 @@ export class SolanaService {
     try {
       const publicKey = new PublicKey(walletAddress);
       const mintPublicKey = new PublicKey(tokenMint);
-      
+
       const tokenAccount = await getAssociatedTokenAddress(mintPublicKey, publicKey);
       const accountInfo = await getAccount(this.connection, tokenAccount);
-      
+
       return {
         balance: Number(accountInfo.amount),
         decimals: accountInfo.mint.toString(),
@@ -85,7 +85,7 @@ export class SolanaService {
     try {
       const fromPublicKey = new PublicKey(fromWallet);
       const toPublicKey = new PublicKey(toWallet);
-      
+
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: fromPublicKey,
@@ -97,7 +97,7 @@ export class SolanaService {
       // In a real implementation, you would sign the transaction with the private key
       // For now, we'll simulate the transaction
       const signature = `mock_signature_${Date.now()}`;
-      
+
       this.logger.info('SOL transfer initiated', {
         from: fromWallet,
         to: toWallet,
@@ -122,10 +122,10 @@ export class SolanaService {
       const fromPublicKey = new PublicKey(fromWallet);
       const toPublicKey = new PublicKey(toWallet);
       const mintPublicKey = new PublicKey(tokenMint);
-      
+
       const fromTokenAccount = await getAssociatedTokenAddress(mintPublicKey, fromPublicKey);
       const toTokenAccount = await getAssociatedTokenAddress(mintPublicKey, toPublicKey);
-      
+
       const transaction = new Transaction().add(
         createTransferInstruction(
           fromTokenAccount,
@@ -137,7 +137,7 @@ export class SolanaService {
 
       // In a real implementation, you would sign the transaction with the private key
       const signature = `mock_token_signature_${Date.now()}`;
-      
+
       this.logger.info('Token transfer initiated', {
         from: fromWallet,
         to: toWallet,
@@ -162,13 +162,13 @@ export class SolanaService {
     try {
       // This is a simplified example - in reality, you'd use Anchor or similar
       // to interact with Solana programs
-      
+
       const contractPublicKey = new PublicKey(contractAddress);
       const walletPublicKey = new PublicKey(walletAddress);
-      
+
       // Simulate smart contract call
       const signature = `mock_contract_${Date.now()}`;
-      
+
       this.logger.info('Smart contract call initiated', {
         contract: contractAddress,
         method,
@@ -196,10 +196,10 @@ export class SolanaService {
     try {
       const walletPublicKey = new PublicKey(walletAddress);
       const programPublicKey = new PublicKey(stakingProgramId);
-      
+
       // Simulate staking transaction
       const signature = `mock_stake_${Date.now()}`;
-      
+
       this.logger.info('Token staking initiated', {
         wallet: walletAddress,
         amount,
@@ -224,10 +224,10 @@ export class SolanaService {
     try {
       const walletPublicKey = new PublicKey(walletAddress);
       const stakingAccountPublicKey = new PublicKey(stakingAccount);
-      
+
       // Simulate unstaking transaction
       const signature = `mock_unstake_${Date.now()}`;
-      
+
       this.logger.info('Token unstaking initiated', {
         wallet: walletAddress,
         stakingAccount,
@@ -266,7 +266,7 @@ export class SolanaService {
       // Simulate attestation creation
       const attestationId = `attest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const signature = `mock_attestation_${Date.now()}`;
-      
+
       this.logger.info('Attestation created', {
         attestationId,
         data,
@@ -305,7 +305,7 @@ export class SolanaService {
     try {
       const publicKey = new PublicKey(walletAddress);
       const signatures = await this.connection.getSignaturesForAddress(publicKey, { limit });
-      
+
       const transactions = await Promise.all(
         signatures.map(async (sig) => {
           const tx = await this.connection.getTransaction(sig.signature);
@@ -339,7 +339,7 @@ export class SolanaService {
     try {
       const version = await this.connection.getVersion();
       const epochInfo = await this.connection.getEpochInfo();
-      
+
       return {
         network: this.network,
         rpcEndpoint: this.rpcEndpoint,
