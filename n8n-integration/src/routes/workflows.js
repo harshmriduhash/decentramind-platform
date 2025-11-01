@@ -25,14 +25,14 @@ const validateRequest = (req, res, next) => {
 const authenticateRequest = (req, res, next) => {
   const walletAddress = req.get('X-Wallet-Address');
   const agentId = req.get('X-Agent-ID');
-  
+
   if (!walletAddress) {
     return res.status(401).json({
       error: 'Wallet address required',
       code: 'WALLET_REQUIRED'
     });
   }
-  
+
   req.walletAddress = walletAddress;
   req.agentId = agentId;
   next();
@@ -59,19 +59,19 @@ router.get('/', [
 ], async (req, res) => {
   try {
     const { category, limit = 10 } = req.query;
-    
+
     // Get workflow service from app context
     const workflowService = req.app.locals.services.workflow;
     const workflows = await workflowService.getWorkflows(category);
-    
+
     const limitedWorkflows = workflows.slice(0, parseInt(limit));
-    
+
     logger.info('Workflows retrieved', {
       category,
       count: limitedWorkflows.length,
       walletAddress: req.walletAddress
     });
-    
+
     res.json({
       success: true,
       workflows: limitedWorkflows,
@@ -94,7 +94,7 @@ router.get('/:workflowId', [
   try {
     const { workflowId } = req.params;
     const workflowService = req.app.locals.services.workflow;
-    
+
     const workflow = await workflowService.getWorkflow(workflowId);
     if (!workflow) {
       return res.status(404).json({
@@ -102,12 +102,12 @@ router.get('/:workflowId', [
         workflowId
       });
     }
-    
+
     logger.info('Workflow retrieved', {
       workflowId,
       walletAddress: req.walletAddress
     });
-    
+
     res.json({
       success: true,
       workflow
@@ -133,33 +133,33 @@ router.post('/:workflowId/execute', [
     const { workflowId } = req.params;
     const { inputData, context = {} } = req.body;
     const workflowService = req.app.locals.services.workflow;
-    
+
     // Add authentication context
     const executionContext = {
       ...context,
       agentId: req.agentId,
       walletAddress: req.walletAddress
     };
-    
+
     logger.info('Workflow execution requested', {
       workflowId,
       agentId: req.agentId,
       walletAddress: req.walletAddress
     });
-    
+
     const result = await workflowService.executeWorkflow(
       workflowId,
       inputData,
       executionContext
     );
-    
+
     if (result.success) {
       logger.info('Workflow executed successfully', {
         workflowId,
         executionId: result.executionId,
         duration: result.duration
       });
-      
+
       res.json({
         success: true,
         executionId: result.executionId,
@@ -171,7 +171,7 @@ router.post('/:workflowId/execute', [
         workflowId,
         error: result.error
       });
-      
+
       res.status(400).json({
         success: false,
         error: result.error
@@ -195,7 +195,7 @@ router.get('/executions/:executionId', [
   try {
     const { executionId } = req.params;
     const workflowService = req.app.locals.services.workflow;
-    
+
     const execution = await workflowService.getWorkflowStatus(executionId);
     if (!execution) {
       return res.status(404).json({
@@ -203,7 +203,7 @@ router.get('/executions/:executionId', [
         executionId
       });
     }
-    
+
     // Verify ownership
     if (execution.walletAddress !== req.walletAddress) {
       return res.status(403).json({
@@ -211,13 +211,13 @@ router.get('/executions/:executionId', [
         message: 'You can only view your own executions'
       });
     }
-    
+
     logger.info('Execution status retrieved', {
       executionId,
       status: execution.status,
       walletAddress: req.walletAddress
     });
-    
+
     res.json({
       success: true,
       execution
@@ -242,23 +242,23 @@ router.get('/agent/:agentId/executions', [
     const { agentId } = req.params;
     const { limit = 10 } = req.query;
     const workflowService = req.app.locals.services.workflow;
-    
+
     const executions = await workflowService.getWorkflowExecutions(
       agentId,
       parseInt(limit)
     );
-    
+
     // Filter by wallet address for security
     const userExecutions = executions.filter(
       execution => execution.walletAddress === req.walletAddress
     );
-    
+
     logger.info('Agent executions retrieved', {
       agentId,
       count: userExecutions.length,
       walletAddress: req.walletAddress
     });
-    
+
     res.json({
       success: true,
       executions: userExecutions,
@@ -289,17 +289,17 @@ router.post('/', [
       createdBy: req.walletAddress,
       agentId: req.agentId
     };
-    
+
     const workflowService = req.app.locals.services.workflow;
     const workflow = await workflowService.createWorkflow(workflowData);
-    
+
     logger.info('Workflow created', {
       workflowId: workflow.id,
       name: workflow.name,
       category: workflow.category,
       walletAddress: req.walletAddress
     });
-    
+
     res.status(201).json({
       success: true,
       workflow
@@ -326,17 +326,17 @@ router.put('/:workflowId', [
   try {
     const { workflowId } = req.params;
     const updates = req.body;
-    
+
     const workflowService = req.app.locals.services.workflow;
     const workflow = await workflowService.getWorkflow(workflowId);
-    
+
     if (!workflow) {
       return res.status(404).json({
         error: 'Workflow not found',
         workflowId
       });
     }
-    
+
     // Verify ownership
     if (workflow.createdBy !== req.walletAddress) {
       return res.status(403).json({
@@ -344,14 +344,14 @@ router.put('/:workflowId', [
         message: 'You can only update your own workflows'
       });
     }
-    
+
     const updatedWorkflow = await workflowService.updateWorkflow(workflowId, updates);
-    
+
     logger.info('Workflow updated', {
       workflowId,
       walletAddress: req.walletAddress
     });
-    
+
     res.json({
       success: true,
       workflow: updatedWorkflow
@@ -374,7 +374,7 @@ router.delete('/:workflowId', [
   try {
     const { workflowId } = req.params;
     const workflowService = req.app.locals.services.workflow;
-    
+
     const workflow = await workflowService.getWorkflow(workflowId);
     if (!workflow) {
       return res.status(404).json({
@@ -382,7 +382,7 @@ router.delete('/:workflowId', [
         workflowId
       });
     }
-    
+
     // Verify ownership
     if (workflow.createdBy !== req.walletAddress) {
       return res.status(403).json({
@@ -390,14 +390,14 @@ router.delete('/:workflowId', [
         message: 'You can only delete your own workflows'
       });
     }
-    
+
     await workflowService.deleteWorkflow(workflowId);
-    
+
     logger.info('Workflow deleted', {
       workflowId,
       walletAddress: req.walletAddress
     });
-    
+
     res.json({
       success: true,
       message: 'Workflow deleted successfully'
@@ -422,19 +422,19 @@ router.post('/executions/:executionId/approve', [
     const { executionId } = req.params;
     const { approved } = req.body;
     const workflowService = req.app.locals.services.workflow;
-    
+
     const result = await workflowService.processHITLApproval(
       executionId,
       approved,
       req.walletAddress
     );
-    
+
     logger.info('HITL approval processed', {
       executionId,
       approved,
       approverWallet: req.walletAddress
     });
-    
+
     res.json({
       success: true,
       approval: result
