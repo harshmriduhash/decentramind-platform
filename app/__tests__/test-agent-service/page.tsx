@@ -20,9 +20,9 @@ const TestAgentServicePage: React.FC = () => {
         setLoading(true);
         setError(null);
         setTestResults([]);
-        
+
         addTestResult('Starting agent service test...');
-        
+
         // Test 1: Try async method
         addTestResult('Testing async getAgents()...');
         try {
@@ -33,7 +33,7 @@ const TestAgentServicePage: React.FC = () => {
           addTestResult(`Async method failed: ${asyncError}`);
           console.error('Async error:', asyncError);
         }
-        
+
         // Test 2: Try sync method
         addTestResult('Testing sync getAgentsSync()...');
         try {
@@ -45,9 +45,9 @@ const TestAgentServicePage: React.FC = () => {
           addTestResult(`Sync method failed: ${syncError}`);
           console.error('Sync error:', syncError);
         }
-        
+
         addTestResult('Test completed successfully!');
-        
+
       } catch (err) {
         console.error('Test failed:', err);
         setError('Test failed. Check console for details.');
@@ -65,18 +65,18 @@ const TestAgentServicePage: React.FC = () => {
     setError(null);
     setTestResults([]);
     setAgents([]);
-    
+
     // Re-run the test
     setTimeout(() => {
       const testAgentService = async () => {
         try {
           addTestResult('Re-running test...');
-          
+
           // Test sync method directly
           const syncAgents = agentService.getMockAgents();
           addTestResult(`Sync method returned ${syncAgents.length} agents`);
           setAgents(syncAgents);
-          
+
           addTestResult('Re-test completed successfully!');
         } catch (err) {
           addTestResult(`Re-test failed: ${err}`);
@@ -84,7 +84,7 @@ const TestAgentServicePage: React.FC = () => {
           setLoading(false);
         }
       };
-      
+
       testAgentService();
     }, 100);
   };
@@ -101,26 +101,26 @@ const TestAgentServicePage: React.FC = () => {
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" gutterBottom>Agent Service Test</Typography>
-      
-      <Button 
-        variant="contained" 
+
+      <Button
+        variant="contained"
         onClick={runTestAgain}
         sx={{ mb: 3 }}
       >
         Run Test Again
       </Button>
-      
+
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>
       )}
-      
+
       <Box sx={{ mb: 3 }}>
         <Typography variant="h6" gutterBottom>Test Results:</Typography>
-        <Box sx={{ 
-          backgroundColor: '#1a1a1a', 
-          p: 2, 
-          borderRadius: 1, 
-          maxHeight: 300, 
+        <Box sx={{
+          backgroundColor: '#1a1a1a',
+          p: 2,
+          borderRadius: 1,
+          maxHeight: 300,
           overflow: 'auto',
           fontFamily: 'monospace',
           fontSize: '0.875rem'
@@ -132,7 +132,7 @@ const TestAgentServicePage: React.FC = () => {
           ))}
         </Box>
       </Box>
-      
+
       <Box>
         <Typography variant="h6" gutterBottom>Agents Found: {agents.length}</Typography>
         {agents.length === 0 ? (
