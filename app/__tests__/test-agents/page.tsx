@@ -37,7 +37,7 @@ export default function TestAgentsPage() {
   return (
     <div>
       <h1>Test Agents Page</h1>
-      <p>Total agents: {agents.length}</p>
+      <p>Total agents:- {agents.length}</p>
       {agents.map((agent, index) => (
         <div key={index}>
           <h3>{agent.name}</h3>
