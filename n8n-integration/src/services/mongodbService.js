@@ -12,7 +12,7 @@ export class MongoDBService {
     this.db = null;
     this.connectionString = process.env.MONGODB_URI || 'mongodb://localhost:27017';
     this.databaseName = process.env.MONGODB_DB || 'decentramind_n8n';
-    
+
     this.logger = winston.createLogger({
       level: 'info',
       format: winston.format.combine(
@@ -31,10 +31,10 @@ export class MongoDBService {
       this.client = new MongoClient(this.connectionString);
       await this.client.connect();
       this.db = this.client.db(this.databaseName);
-      
+
       // Create indexes
       await this.createIndexes();
-      
+
       this.logger.info('MongoDB connected successfully');
     } catch (error) {
       this.logger.error('Failed to connect to MongoDB:', error);
@@ -103,12 +103,12 @@ export class MongoDBService {
         createdAt: new Date(),
         updatedAt: new Date()
       });
-      
+
       this.logger.info('Workflow execution logged', {
         executionId: execution.executionId,
         agentId: execution.agentId
       });
-      
+
       return result.insertedId;
     } catch (error) {
       this.logger.error('Failed to log execution:', error);
@@ -121,7 +121,7 @@ export class MongoDBService {
       const execution = await this.db.collection('workflow_executions').findOne({
         executionId
       });
-      
+
       return execution;
     } catch (error) {
       this.logger.error('Failed to get execution:', error);
@@ -136,7 +136,7 @@ export class MongoDBService {
         .sort({ createdAt: -1 })
         .limit(limit)
         .toArray();
-      
+
       return executions;
     } catch (error) {
       this.logger.error('Failed to get executions by agent:', error);
@@ -151,7 +151,7 @@ export class MongoDBService {
         .sort({ createdAt: -1 })
         .limit(limit)
         .toArray();
-      
+
       return executions;
     } catch (error) {
       this.logger.error('Failed to get executions by wallet:', error);
@@ -163,14 +163,14 @@ export class MongoDBService {
     try {
       const result = await this.db.collection('workflow_executions').updateOne(
         { executionId },
-        { 
+        {
           $set: {
             ...updates,
             updatedAt: new Date()
           }
         }
       );
-      
+
       return result.modifiedCount > 0;
     } catch (error) {
       this.logger.error('Failed to update execution:', error);
@@ -187,12 +187,12 @@ export class MongoDBService {
         createdAt: new Date(),
         updatedAt: new Date()
       });
-      
+
       this.logger.info('Workflow created', {
         workflowId: workflow.id,
         category: workflow.category
       });
-      
+
       return result.insertedId;
     } catch (error) {
       this.logger.error('Failed to create workflow:', error);
@@ -205,7 +205,7 @@ export class MongoDBService {
       const workflow = await this.db.collection('workflows').findOne({
         id: workflowId
       });
-      
+
       return workflow;
     } catch (error) {
       this.logger.error('Failed to get workflow:', error);
@@ -217,14 +217,14 @@ export class MongoDBService {
     try {
       const result = await this.db.collection('workflows').updateOne(
         { id: workflowId },
-        { 
+        {
           $set: {
             ...updates,
             updatedAt: new Date()
           }
         }
       );
-      
+
       return result.modifiedCount > 0;
     } catch (error) {
       this.logger.error('Failed to update workflow:', error);
@@ -237,7 +237,7 @@ export class MongoDBService {
       const result = await this.db.collection('workflows').deleteOne({
         id: workflowId
       });
-      
+
       this.logger.info('Workflow deleted', { workflowId });
       return result.deletedCount > 0;
     } catch (error) {
@@ -252,7 +252,7 @@ export class MongoDBService {
         .find({ category })
         .sort({ createdAt: -1 })
         .toArray();
-      
+
       return workflows;
     } catch (error) {
       this.logger.error('Failed to get workflows by category:', error);
@@ -269,11 +269,11 @@ export class MongoDBService {
         createdAt: new Date(),
         updatedAt: new Date()
       });
-      
+
       this.logger.info('HITL approval created', {
         executionId: approval.executionId
       });
-      
+
       return result.insertedId;
     } catch (error) {
       this.logger.error('Failed to create HITL approval:', error);
@@ -286,7 +286,7 @@ export class MongoDBService {
       const approval = await this.db.collection('hitl_approvals').findOne({
         executionId
       });
-      
+
       return approval;
     } catch (error) {
       this.logger.error('Failed to get HITL approval:', error);
@@ -298,14 +298,14 @@ export class MongoDBService {
     try {
       const result = await this.db.collection('hitl_approvals').updateOne(
         { executionId },
-        { 
+        {
           $set: {
             ...updates,
             updatedAt: new Date()
           }
         }
       );
-      
+
       return result.modifiedCount > 0;
     } catch (error) {
       this.logger.error('Failed to update HITL approval:', error);
@@ -316,13 +316,13 @@ export class MongoDBService {
   async getPendingHITLApprovals() {
     try {
       const approvals = await this.db.collection('hitl_approvals')
-        .find({ 
+        .find({
           status: 'pending',
           expiresAt: { $gt: new Date() }
         })
         .sort({ createdAt: -1 })
         .toArray();
-      
+
       return approvals;
     } catch (error) {
       this.logger.error('Failed to get pending HITL approvals:', error);
@@ -338,9 +338,9 @@ export class MongoDBService {
         _id: new ObjectId(),
         timestamp: new Date()
       };
-      
+
       await this.db.collection('audit_logs').insertOne(auditLog);
-      
+
       this.logger.info('Audit event logged', {
         action: event.action,
         walletAddress: event.walletAddress,
@@ -359,7 +359,7 @@ export class MongoDBService {
         .sort({ timestamp: -1 })
         .limit(limit)
         .toArray();
-      
+
       return logs;
     } catch (error) {
       this.logger.error('Failed to get audit logs:', error);
@@ -374,7 +374,7 @@ export class MongoDBService {
         .sort({ timestamp: -1 })
         .limit(limit)
         .toArray();
-      
+
       return logs;
     } catch (error) {
       this.logger.error('Failed to get audit logs by agent:', error);
@@ -389,11 +389,11 @@ export class MongoDBService {
       const matchStage = {
         createdAt: { $gte: startDate }
       };
-      
+
       if (agentId) {
         matchStage.agentId = agentId;
       }
-      
+
       const stats = await this.db.collection('workflow_executions').aggregate([
         { $match: matchStage },
         {
@@ -410,7 +410,7 @@ export class MongoDBService {
           }
         }
       ]).toArray();
-      
+
       return stats[0] || {
         totalExecutions: 0,
         successfulExecutions: 0,
@@ -426,7 +426,7 @@ export class MongoDBService {
   async getAgentPerformance(agentId, timeRange = 30) {
     try {
       const startDate = new Date(Date.now() - timeRange * 24 * 60 * 60 * 1000);
-      
+
       const performance = await this.db.collection('workflow_executions').aggregate([
         {
           $match: {
@@ -446,7 +446,7 @@ export class MongoDBService {
           }
         }
       ]).toArray();
-      
+
       return performance[0] || null;
     } catch (error) {
       this.logger.error('Failed to get agent performance:', error);
