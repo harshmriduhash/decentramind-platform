@@ -12,7 +12,7 @@ export class AuthService {
     this.mongodb = mongodbService;
     this.jwtSecret = process.env.JWT_SECRET || 'decentramind-jwt-secret-2024';
     this.jwtExpiry = process.env.JWT_EXPIRY || '24h';
-    
+
     this.logger = winston.createLogger({
       level: 'info',
       format: winston.format.combine(
@@ -31,12 +31,12 @@ export class AuthService {
       // In a real implementation, you would verify the signature using Solana's crypto
       // For now, we'll simulate validation
       const expectedSignature = this.generateMockSignature(walletAddress, message);
-      
+
       if (signature === expectedSignature) {
         this.logger.info('Wallet signature validated', { walletAddress });
         return true;
       }
-      
+
       this.logger.warn('Invalid wallet signature', { walletAddress, signature });
       return false;
     } catch (error) {
@@ -61,7 +61,7 @@ export class AuthService {
       };
 
       const token = jwt.sign(payload, this.jwtSecret);
-      
+
       this.logger.info('Access token generated', { walletAddress, agentId });
       return token;
     } catch (error) {
@@ -73,12 +73,12 @@ export class AuthService {
   async verifyAccessToken(token) {
     try {
       const decoded = jwt.verify(token, this.jwtSecret);
-      
-      this.logger.info('Access token verified', { 
+
+      this.logger.info('Access token verified', {
         walletAddress: decoded.walletAddress,
-        agentId: decoded.agentId 
+        agentId: decoded.agentId
       });
-      
+
       return decoded;
     } catch (error) {
       this.logger.error('Failed to verify access token:', error);
@@ -128,10 +128,10 @@ export class AuthService {
         }
       }
 
-      this.logger.info('Workflow access granted', { 
-        walletAddress, 
-        workflowId, 
-        requiredDMT 
+      this.logger.info('Workflow access granted', {
+        walletAddress,
+        workflowId,
+        requiredDMT
       });
 
       return {
@@ -152,13 +152,13 @@ export class AuthService {
       // In a real implementation, you would check the actual DMT balance on Solana
       // For now, we'll simulate a balance check
       const mockBalance = 1000; // Mock balance
-      
-      this.logger.info('DMT balance checked', { 
-        walletAddress, 
-        requiredAmount, 
-        balance: mockBalance 
+
+      this.logger.info('DMT balance checked', {
+        walletAddress,
+        requiredAmount,
+        balance: mockBalance
       });
-      
+
       return mockBalance >= requiredAmount;
     } catch (error) {
       this.logger.error('Failed to check DMT balance:', error);
@@ -171,12 +171,12 @@ export class AuthService {
       // In a real implementation, you would check DAO governance status
       // For now, we'll simulate DAO approval
       const mockDAOApproval = true;
-      
-      this.logger.info('DAO approval checked', { 
-        walletAddress, 
-        approved: mockDAOApproval 
+
+      this.logger.info('DAO approval checked', {
+        walletAddress,
+        approved: mockDAOApproval
       });
-      
+
       return mockDAOApproval;
     } catch (error) {
       this.logger.error('Failed to check DAO approval:', error);
@@ -236,9 +236,9 @@ export class AuthService {
         permissions.canApproveWorkflows = true;
       }
 
-      this.logger.info('Workflow permissions retrieved', { 
-        walletAddress, 
-        permissions 
+      this.logger.info('Workflow permissions retrieved', {
+        walletAddress,
+        permissions
       });
 
       return permissions;
@@ -291,11 +291,11 @@ export class AuthService {
       };
 
       await this.mongodb.createAPIKey(keyData);
-      
-      this.logger.info('API key created', { 
-        walletAddress, 
-        name, 
-        keyId: apiKey.substring(0, 8) + '...' 
+
+      this.logger.info('API key created', {
+        walletAddress,
+        name,
+        keyId: apiKey.substring(0, 8) + '...'
       });
 
       return {
@@ -320,9 +320,9 @@ export class AuthService {
       // Update last used timestamp
       await this.mongodb.updateAPIKey(apiKey, { lastUsed: new Date() });
 
-      this.logger.info('API key validated', { 
+      this.logger.info('API key validated', {
         walletAddress: keyData.walletAddress,
-        name: keyData.name 
+        name: keyData.name
       });
 
       return keyData;
@@ -340,10 +340,10 @@ export class AuthService {
       }
 
       await this.mongodb.updateAPIKey(apiKey, { isActive: false, revokedAt: new Date() });
-      
-      this.logger.info('API key revoked', { 
-        walletAddress, 
-        name: keyData.name 
+
+      this.logger.info('API key revoked', {
+        walletAddress,
+        name: keyData.name
       });
 
       return true;
