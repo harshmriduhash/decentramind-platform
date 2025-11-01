@@ -14,12 +14,12 @@ const SimpleTestPage: React.FC = () => {
   useEffect(() => {
     const runSimpleTest = () => {
       addTestResult('Starting simple test...');
-      
+
       // Test 1: Basic JavaScript
       addTestResult('Testing basic JavaScript...');
       const testArray = [1, 2, 3];
       addTestResult(`Array length: ${testArray.length}`);
-      
+
       // Test 2: Static agent data
       addTestResult('Testing static agent data...');
       const staticAgents = [
@@ -45,14 +45,14 @@ const SimpleTestPage: React.FC = () => {
           level: 1
         }
       ];
-      
+
       addTestResult(`Static agents created: ${staticAgents.length}`);
       setAgents(staticAgents);
-      
+
       // Test 3: React state
       addTestResult('Testing React state...');
       addTestResult(`State updated with ${staticAgents.length} agents`);
-      
+
       addTestResult('Simple test completed successfully!');
     };
 
@@ -62,7 +62,7 @@ const SimpleTestPage: React.FC = () => {
   const runTestAgain = () => {
     setTestResults([]);
     setAgents([]);
-    
+
     setTimeout(() => {
       addTestResult('Re-running simple test...');
       const staticAgents = [
@@ -88,7 +88,7 @@ const SimpleTestPage: React.FC = () => {
           level: 1
         }
       ];
-      
+
       setAgents(staticAgents);
       addTestResult(`Re-test completed with ${staticAgents.length} agents`);
     }, 100);
@@ -97,22 +97,22 @@ const SimpleTestPage: React.FC = () => {
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" gutterBottom>Simple Test Page</Typography>
-      
-      <Button 
-        variant="contained" 
+
+      <Button
+        variant="contained"
         onClick={runTestAgain}
         sx={{ mb: 3 }}
       >
         Run Test Again
       </Button>
-      
+
       <Box sx={{ mb: 3 }}>
         <Typography variant="h6" gutterBottom>Test Results:</Typography>
-        <Box sx={{ 
-          backgroundColor: '#1a1a1a', 
-          p: 2, 
-          borderRadius: 1, 
-          maxHeight: 300, 
+        <Box sx={{
+          backgroundColor: '#1a1a1a',
+          p: 2,
+          borderRadius: 1,
+          maxHeight: 300,
           overflow: 'auto',
           fontFamily: 'monospace',
           fontSize: '0.875rem'
@@ -124,7 +124,7 @@ const SimpleTestPage: React.FC = () => {
           ))}
         </Box>
       </Box>
-      
+
       <Box>
         <Typography variant="h6" gutterBottom>Agents Found: {agents.length}</Typography>
         {agents.length === 0 ? (
