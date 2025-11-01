@@ -19,7 +19,7 @@ export class WorkflowService {
     this.workflows = new Map();
     this.executionQueue = [];
     this.isProcessing = false;
-    
+
     this.logger = winston.createLogger({
       level: 'info',
       format: winston.format.combine(
@@ -36,7 +36,7 @@ export class WorkflowService {
   async initializeN8N() {
     try {
       this.logger.info('Initializing N8N...');
-      
+
       // Set N8N environment variables
       process.env.N8N_HOST = process.env.N8N_HOST || 'localhost';
       process.env.N8N_PORT = process.env.N8N_PORT || '5678';
@@ -47,10 +47,10 @@ export class WorkflowService {
       process.env.N8N_BASIC_AUTH_PASSWORD = process.env.N8N_BASIC_AUTH_PASSWORD || 'admin123';
       process.env.N8N_ENCRYPTION_KEY = process.env.N8N_ENCRYPTION_KEY || 'decentramind-n8n-key-2024';
       process.env.WEBHOOK_URL = process.env.WEBHOOK_URL || 'http://localhost:3001';
-      
+
       // Load workflow templates
       await this.loadWorkflowTemplates();
-      
+
       this.logger.info('N8N initialized successfully');
     } catch (error) {
       this.logger.error('Failed to initialize N8N:', error);
@@ -62,20 +62,20 @@ export class WorkflowService {
     try {
       const workflowsDir = path.join(__dirname, '../workflows');
       const categories = await fs.readdir(workflowsDir);
-      
+
       for (const category of categories) {
         const categoryPath = path.join(workflowsDir, category);
         const stat = await fs.stat(categoryPath);
-        
+
         if (stat.isDirectory()) {
           const workflowFiles = await fs.readdir(categoryPath);
-          
+
           for (const file of workflowFiles) {
             if (file.endsWith('.json')) {
               const workflowPath = path.join(categoryPath, file);
               const workflowData = await fs.readFile(workflowPath, 'utf8');
               const workflow = JSON.parse(workflowData);
-              
+
               // Store workflow template
               const workflowId = `${category}-${file.replace('.json', '')}`;
               this.workflows.set(workflowId, {
@@ -84,13 +84,13 @@ export class WorkflowService {
                 template: true,
                 path: workflowPath
               });
-              
+
               this.logger.info(`Loaded workflow template: ${workflowId}`);
             }
           }
         }
       }
-      
+
       this.logger.info(`Loaded ${this.workflows.size} workflow templates`);
     } catch (error) {
       this.logger.error('Failed to load workflow templates:', error);
@@ -101,7 +101,7 @@ export class WorkflowService {
   async executeWorkflow(workflowId, inputData, context = {}) {
     try {
       const executionId = this.generateExecutionId();
-      
+
       this.logger.info(`Executing workflow: ${workflowId}`, {
         executionId,
         agentId: context.agentId,
@@ -159,7 +159,7 @@ export class WorkflowService {
 
     } catch (error) {
       this.logger.error(`Workflow execution failed: ${workflowId}`, error);
-      
+
       // Log failed execution
       await this.logExecution({
         executionId: this.generateExecutionId(),
@@ -360,7 +360,7 @@ export class WorkflowService {
       };
 
       await this.mongodb.createHITLApproval(approval);
-      
+
       this.logger.info(`HITL approval requested: ${executionId}`);
       return approval;
     } catch (error) {
