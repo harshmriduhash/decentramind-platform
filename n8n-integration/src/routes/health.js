@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
       version: process.env.npm_package_version || '1.0.0',
       environment: process.env.NODE_ENV || 'development'
     };
-    
+
     res.json(health);
   } catch (error) {
     logger.error('Health check failed:', error);
@@ -57,7 +57,7 @@ router.get('/detailed', async (req, res) => {
       environment: process.env.NODE_ENV || 'development',
       services: {}
     };
-    
+
     // Check MongoDB
     if (services.mongodb) {
       try {
@@ -80,7 +80,7 @@ router.get('/detailed', async (req, res) => {
         connected: false
       };
     }
-    
+
     // Check Redis (if configured)
     if (services.redis) {
       try {
@@ -103,7 +103,7 @@ router.get('/detailed', async (req, res) => {
         connected: false
       };
     }
-    
+
     // Check Solana service
     if (services.solana) {
       try {
@@ -128,7 +128,7 @@ router.get('/detailed', async (req, res) => {
         connected: false
       };
     }
-    
+
     // Check workflow service
     if (services.workflow) {
       try {
@@ -152,7 +152,7 @@ router.get('/detailed', async (req, res) => {
         connected: false
       };
     }
-    
+
     // Check notification service
     if (services.notification) {
       try {
@@ -176,19 +176,19 @@ router.get('/detailed', async (req, res) => {
         connected: false
       };
     }
-    
+
     // Determine overall status
     const unhealthyServices = Object.values(health.services).filter(
       service => service.status === 'unhealthy'
     );
-    
+
     if (unhealthyServices.length > 0) {
       health.status = 'degraded';
     }
-    
+
     const statusCode = health.status === 'healthy' ? 200 : 503;
     res.status(statusCode).json(health);
-    
+
   } catch (error) {
     logger.error('Detailed health check failed:', error);
     res.status(500).json({
@@ -208,7 +208,7 @@ router.get('/ready', async (req, res) => {
       timestamp: new Date().toISOString(),
       checks: {}
     };
-    
+
     // Check if MongoDB is ready
     if (services.mongodb) {
       try {
@@ -222,7 +222,7 @@ router.get('/ready', async (req, res) => {
       readiness.checks.mongodb = 'not_configured';
       readiness.ready = false;
     }
-    
+
     // Check if workflow service is ready
     if (services.workflow) {
       try {
@@ -236,10 +236,10 @@ router.get('/ready', async (req, res) => {
       readiness.checks.workflow = 'not_configured';
       readiness.ready = false;
     }
-    
+
     const statusCode = readiness.ready ? 200 : 503;
     res.status(statusCode).json(readiness);
-    
+
   } catch (error) {
     logger.error('Readiness check failed:', error);
     res.status(500).json({
@@ -271,7 +271,7 @@ router.get('/metrics', async (req, res) => {
       version: process.env.npm_package_version || '1.0.0',
       environment: process.env.NODE_ENV || 'development'
     };
-    
+
     // Add workflow metrics
     if (services.workflow) {
       try {
@@ -289,7 +289,7 @@ router.get('/metrics', async (req, res) => {
         };
       }
     }
-    
+
     // Add execution metrics
     if (services.mongodb) {
       try {
@@ -301,9 +301,9 @@ router.get('/metrics', async (req, res) => {
         };
       }
     }
-    
+
     res.json(metrics);
-    
+
   } catch (error) {
     logger.error('Metrics collection failed:', error);
     res.status(500).json({
