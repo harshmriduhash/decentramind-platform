@@ -11,7 +11,9 @@
         "test": "jest",
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
-        "test:devnet": "./scripts/test-devnet-integration.sh"
+        "test:devnet": "./scripts/test-devnet-integration.sh",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
     },
     "dependencies": {
         "@chainlink/contracts": "^1.4.0",
