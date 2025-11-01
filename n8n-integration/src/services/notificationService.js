@@ -20,7 +20,7 @@ export class NotificationService {
         pass: process.env.SMTP_PASS
       }
     };
-    
+
     this.logger = winston.createLogger({
       level: 'info',
       format: winston.format.combine(
@@ -60,7 +60,7 @@ export class NotificationService {
       };
 
       const response = await axios.post(url, payload);
-      
+
       this.logger.info('Telegram message sent', {
         chatId,
         messageId: response.data.result.message_id
@@ -97,7 +97,7 @@ export class NotificationService {
           'Content-Type': 'application/json'
         }
       });
-      
+
       this.logger.info('Discord message sent', {
         channelId,
         messageId: response.data.id
@@ -131,7 +131,7 @@ export class NotificationService {
       };
 
       const result = await this.emailTransporter.sendMail(mailOptions);
-      
+
       this.logger.info('Email sent', {
         to,
         subject,
@@ -154,12 +154,12 @@ export class NotificationService {
   async sendWorkflowNotification(notification) {
     try {
       const { type, workflowId, executionId, status, message, recipients } = notification;
-      
+
       const notificationMessage = this.formatWorkflowNotification(notification);
-      
+
       // Send to all configured channels
       const results = [];
-      
+
       // Telegram notifications
       if (recipients.telegram) {
         for (const chatId of recipients.telegram) {
@@ -167,7 +167,7 @@ export class NotificationService {
           results.push({ channel: 'telegram', chatId, ...result });
         }
       }
-      
+
       // Discord notifications
       if (recipients.discord) {
         for (const channelId of recipients.discord) {
@@ -175,7 +175,7 @@ export class NotificationService {
           results.push({ channel: 'discord', channelId, ...result });
         }
       }
-      
+
       // Email notifications
       if (recipients.email) {
         for (const email of recipients.email) {
@@ -187,14 +187,14 @@ export class NotificationService {
           results.push({ channel: 'email', email, ...result });
         }
       }
-      
+
       this.logger.info('Workflow notification sent', {
         workflowId,
         executionId,
         status,
         results: results.length
       });
-      
+
       return {
         success: true,
         results
@@ -211,11 +211,11 @@ export class NotificationService {
   async sendAgentNotification(notification) {
     try {
       const { agentId, type, message, walletAddress, recipients } = notification;
-      
+
       const notificationMessage = this.formatAgentNotification(notification);
-      
+
       const results = [];
-      
+
       // Send to agent-specific channels
       if (recipients.telegram) {
         for (const chatId of recipients.telegram) {
@@ -223,21 +223,21 @@ export class NotificationService {
           results.push({ channel: 'telegram', chatId, ...result });
         }
       }
-      
+
       if (recipients.discord) {
         for (const channelId of recipients.discord) {
           const result = await this.sendDiscordMessage(channelId, notificationMessage);
           results.push({ channel: 'discord', channelId, ...result });
         }
       }
-      
+
       this.logger.info('Agent notification sent', {
         agentId,
         type,
         walletAddress,
         results: results.length
       });
-      
+
       return {
         success: true,
         results
@@ -254,7 +254,7 @@ export class NotificationService {
   async sendHITLApprovalRequest(approval) {
     try {
       const { executionId, workflowId, agentId, walletAddress, approvalData } = approval;
-      
+
       const message = `🔔 **Human-in-the-Loop Approval Required**\n\n` +
         `**Workflow:** ${workflowId}\n` +
         `**Agent:** ${agentId}\n` +
@@ -262,29 +262,29 @@ export class NotificationService {
         `**Requested by:** ${walletAddress}\n` +
         `**Details:** ${JSON.stringify(approvalData, null, 2)}\n\n` +
         `**Action Required:** Please review and approve/reject this workflow execution.`;
-      
+
       const results = [];
-      
+
       // Send to admin channels
       const adminChannels = process.env.ADMIN_TELEGRAM_CHAT_IDS?.split(',') || [];
       for (const chatId of adminChannels) {
         const result = await this.sendTelegramMessage(chatId, message);
         results.push({ channel: 'telegram', chatId, ...result });
       }
-      
+
       const adminDiscordChannels = process.env.ADMIN_DISCORD_CHANNEL_IDS?.split(',') || [];
       for (const channelId of adminDiscordChannels) {
         const result = await this.sendDiscordMessage(channelId, message);
         results.push({ channel: 'discord', channelId, ...result });
       }
-      
+
       this.logger.info('HITL approval request sent', {
         executionId,
         workflowId,
         agentId,
         results: results.length
       });
-      
+
       return {
         success: true,
         results
@@ -300,7 +300,7 @@ export class NotificationService {
 
   formatWorkflowNotification(notification) {
     const { type, workflowId, executionId, status, message, agentId, walletAddress } = notification;
-    
+
     const statusEmoji = {
       'started': '🚀',
       'completed': '✅',
@@ -309,7 +309,7 @@ export class NotificationService {
       'approved': '👍',
       'rejected': '👎'
     };
-    
+
     return `${statusEmoji[status] || '📋'} **Workflow ${status.toUpperCase()}**\n\n` +
       `**Workflow:** ${workflowId}\n` +
       `**Execution:** ${executionId}\n` +
@@ -321,7 +321,7 @@ export class NotificationService {
 
   formatAgentNotification(notification) {
     const { agentId, type, message, walletAddress } = notification;
-    
+
     const typeEmoji = {
       'created': '🤖',
       'updated': '🔄',
@@ -330,7 +330,7 @@ export class NotificationService {
       'error': '⚠️',
       'warning': '⚠️'
     };
-    
+
     return `${typeEmoji[type] || '📋'} **Agent ${type.toUpperCase()}**\n\n` +
       `**Agent ID:** ${agentId}\n` +
       `**Wallet:** ${walletAddress}\n` +
@@ -340,7 +340,7 @@ export class NotificationService {
 
   formatWorkflowEmail(notification) {
     const { type, workflowId, executionId, status, message, agentId, walletAddress } = notification;
-    
+
     return `
       <html>
         <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -380,7 +380,7 @@ export class NotificationService {
       discord: false,
       email: false
     };
-    
+
     try {
       // Test Telegram
       if (this.telegramBotToken) {
@@ -390,7 +390,7 @@ export class NotificationService {
         );
         results.telegram = testResult.success;
       }
-      
+
       // Test Discord
       if (this.discordBotToken) {
         const testResult = await this.sendDiscordMessage(
@@ -399,7 +399,7 @@ export class NotificationService {
         );
         results.discord = testResult.success;
       }
-      
+
       // Test Email
       if (this.emailTransporter) {
         const testResult = await this.sendEmail(
@@ -409,7 +409,7 @@ export class NotificationService {
         );
         results.email = testResult.success;
       }
-      
+
       this.logger.info('Notification channels tested', results);
       return results;
     } catch (error) {
