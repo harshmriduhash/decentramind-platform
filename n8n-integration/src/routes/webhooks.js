@@ -26,26 +26,26 @@ const validateRequest = (req, res, next) => {
 const verifyWebhookSignature = (req, res, next) => {
   const signature = req.get('X-Webhook-Signature');
   const secret = process.env.WEBHOOK_SECRET || 'decentramind-webhook-secret';
-  
+
   if (!signature) {
     return res.status(401).json({
       error: 'Webhook signature required',
       code: 'SIGNATURE_REQUIRED'
     });
   }
-  
+
   const expectedSignature = crypto
     .createHmac('sha256', secret)
     .update(JSON.stringify(req.body))
     .digest('hex');
-  
+
   if (signature !== expectedSignature) {
     return res.status(401).json({
       error: 'Invalid webhook signature',
       code: 'INVALID_SIGNATURE'
     });
   }
-  
+
   next();
 };
 
@@ -75,14 +75,14 @@ router.post('/agent/:agentId', [
     const { agentId } = req.params;
     const { workflowId, data, source = 'external' } = req.body;
     const workflowService = req.app.locals.services.workflow;
-    
+
     logger.info('Agent webhook triggered', {
       agentId,
       workflowId,
       source,
       dataKeys: Object.keys(data)
     });
-    
+
     // Execute workflow
     const result = await workflowService.executeWorkflow(
       workflowId,
@@ -94,14 +94,14 @@ router.post('/agent/:agentId', [
         timestamp: new Date()
       }
     );
-    
+
     if (result.success) {
       logger.info('Agent webhook executed successfully', {
         agentId,
         workflowId,
         executionId: result.executionId
       });
-      
+
       res.json({
         success: true,
         executionId: result.executionId,
@@ -113,7 +113,7 @@ router.post('/agent/:agentId', [
         workflowId,
         error: result.error
       });
-      
+
       res.status(400).json({
         success: false,
         error: result.error
@@ -139,13 +139,13 @@ router.post('/care/orchestrator', [
   try {
     const { patientId, action, data } = req.body;
     const workflowService = req.app.locals.services.workflow;
-    
+
     logger.info('Care Orchestrator webhook triggered', {
       patientId,
       action,
       dataKeys: Object.keys(data)
     });
-    
+
     // Map action to workflow
     const workflowMap = {
       'prior_auth': 'care-prior-auth-workflow',
@@ -153,7 +153,7 @@ router.post('/care/orchestrator', [
       'care_plan': 'care-plan-generation-workflow',
       'medication_review': 'care-medication-review-workflow'
     };
-    
+
     const workflowId = workflowMap[action];
     if (!workflowId) {
       return res.status(400).json({
@@ -162,7 +162,7 @@ router.post('/care/orchestrator', [
         validActions: Object.keys(workflowMap)
       });
     }
-    
+
     const result = await workflowService.executeWorkflow(
       workflowId,
       {
@@ -176,7 +176,7 @@ router.post('/care/orchestrator', [
         source: 'care-webhook'
       }
     );
-    
+
     res.json({
       success: result.success,
       executionId: result.executionId,
@@ -202,20 +202,20 @@ router.post('/cfo/autonomous', [
   try {
     const { companyId, action, data } = req.body;
     const workflowService = req.app.locals.services.workflow;
-    
+
     logger.info('Autonomous CFO webhook triggered', {
       companyId,
       action,
       dataKeys: Object.keys(data)
     });
-    
+
     const workflowMap = {
       'audit': 'cfo-audit-workflow',
       'financial_analysis': 'cfo-analysis-workflow',
       'compliance_check': 'cfo-compliance-workflow',
       'report_generation': 'cfo-report-workflow'
     };
-    
+
     const workflowId = workflowMap[action];
     if (!workflowId) {
       return res.status(400).json({
@@ -224,7 +224,7 @@ router.post('/cfo/autonomous', [
         validActions: Object.keys(workflowMap)
       });
     }
-    
+
     const result = await workflowService.executeWorkflow(
       workflowId,
       {
@@ -238,7 +238,7 @@ router.post('/cfo/autonomous', [
         source: 'cfo-webhook'
       }
     );
-    
+
     res.json({
       success: result.success,
       executionId: result.executionId,
@@ -264,20 +264,20 @@ router.post('/logistics/truthchain', [
   try {
     const { shipmentId, action, data } = req.body;
     const workflowService = req.app.locals.services.workflow;
-    
+
     logger.info('TruthChain Logistics webhook triggered', {
       shipmentId,
       action,
       dataKeys: Object.keys(data)
     });
-    
+
     const workflowMap = {
       'verify': 'logistics-verification-workflow',
       'track': 'logistics-tracking-workflow',
       'attest': 'logistics-attestation-workflow',
       'compliance_check': 'logistics-compliance-workflow'
     };
-    
+
     const workflowId = workflowMap[action];
     if (!workflowId) {
       return res.status(400).json({
@@ -286,7 +286,7 @@ router.post('/logistics/truthchain', [
         validActions: Object.keys(workflowMap)
       });
     }
-    
+
     const result = await workflowService.executeWorkflow(
       workflowId,
       {
@@ -300,7 +300,7 @@ router.post('/logistics/truthchain', [
         source: 'logistics-webhook'
       }
     );
-    
+
     res.json({
       success: result.success,
       executionId: result.executionId,
@@ -326,20 +326,20 @@ router.post('/security/auditor', [
   try {
     const { projectId, action, data } = req.body;
     const workflowService = req.app.locals.services.workflow;
-    
+
     logger.info('Polyglot Security Auditor webhook triggered', {
       projectId,
       action,
       dataKeys: Object.keys(data)
     });
-    
+
     const workflowMap = {
       'code_scan': 'security-code-scan-workflow',
       'vulnerability_check': 'security-vulnerability-workflow',
       'compliance_audit': 'security-compliance-workflow',
       'security_report': 'security-report-workflow'
     };
-    
+
     const workflowId = workflowMap[action];
     if (!workflowId) {
       return res.status(400).json({
@@ -348,7 +348,7 @@ router.post('/security/auditor', [
         validActions: Object.keys(workflowMap)
       });
     }
-    
+
     const result = await workflowService.executeWorkflow(
       workflowId,
       {
@@ -362,7 +362,7 @@ router.post('/security/auditor', [
         source: 'security-webhook'
       }
     );
-    
+
     res.json({
       success: result.success,
       executionId: result.executionId,
@@ -389,13 +389,13 @@ router.post('/external/:system', [
     const { system } = req.params;
     const { event, data } = req.body;
     const workflowService = req.app.locals.services.workflow;
-    
+
     logger.info('External system webhook triggered', {
       system,
       event,
       dataKeys: Object.keys(data)
     });
-    
+
     // Map external system events to workflows
     const systemWorkflowMap = {
       'ehr': {
@@ -419,7 +419,7 @@ router.post('/external/:system', [
         'usage_analytics': 'api-analytics-workflow'
       }
     };
-    
+
     const workflowId = systemWorkflowMap[system]?.[event];
     if (!workflowId) {
       return res.status(400).json({
@@ -429,7 +429,7 @@ router.post('/external/:system', [
         validEvents: Object.keys(systemWorkflowMap[system] || {})
       });
     }
-    
+
     const result = await workflowService.executeWorkflow(
       workflowId,
       {
@@ -443,7 +443,7 @@ router.post('/external/:system', [
         source: `${system}-webhook`
       }
     );
-    
+
     res.json({
       success: result.success,
       executionId: result.executionId,
@@ -484,12 +484,12 @@ router.post('/test', [
   try {
     const { workflowId, data } = req.body;
     const workflowService = req.app.locals.services.workflow;
-    
+
     logger.info('Webhook test triggered', {
       workflowId,
       dataKeys: Object.keys(data)
     });
-    
+
     const result = await workflowService.executeWorkflow(
       workflowId,
       data,
@@ -499,7 +499,7 @@ router.post('/test', [
         source: 'test-webhook'
       }
     );
-    
+
     res.json({
       success: result.success,
       executionId: result.executionId,
