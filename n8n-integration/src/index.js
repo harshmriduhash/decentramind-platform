@@ -61,10 +61,10 @@ class N8NIntegrationService {
         methods: ["GET", "POST"]
       }
     });
-    
+
     this.port = process.env.PORT || 3001;
     this.services = {};
-    
+
     this.initializeServices();
     this.setupMiddleware();
     this.setupRoutes();
@@ -75,21 +75,21 @@ class N8NIntegrationService {
   async initializeServices() {
     try {
       logger.info('Initializing services...');
-      
+
       // Initialize MongoDB
       this.services.mongodb = new MongoDBService();
       await this.services.mongodb.connect();
-      
+
       // Initialize other services
       this.services.workflow = new WorkflowService(this.services.mongodb);
       this.services.webhook = new WebhookService(this.services.mongodb);
       this.services.solana = new SolanaService();
       this.services.auth = new AuthService(this.services.mongodb);
       this.services.notification = new NotificationService();
-      
+
       // Initialize N8N
       await this.services.workflow.initializeN8N();
-      
+
       logger.info('All services initialized successfully');
     } catch (error) {
       logger.error('Failed to initialize services:', error);
@@ -147,12 +147,12 @@ class N8NIntegrationService {
   setupRoutes() {
     // Health check
     this.app.use('/health', healthRoutes);
-    
+
     // API routes
     this.app.use('/api/workflows', workflowRoutes);
     this.app.use('/api/webhooks', webhookRoutes);
     this.app.use('/api/agents', agentRoutes);
-    
+
     // Root endpoint
     this.app.get('/', (req, res) => {
       res.json({
@@ -176,24 +176,24 @@ class N8NIntegrationService {
   setupSocketIO() {
     this.io.on('connection', (socket) => {
       logger.info('Client connected:', socket.id);
-      
+
       // Join agent-specific rooms
       socket.on('join-agent', (agentId) => {
         socket.join(`agent-${agentId}`);
         logger.info(`Client ${socket.id} joined agent room: ${agentId}`);
       });
-      
+
       // Join user-specific rooms
       socket.on('join-user', (walletAddress) => {
         socket.join(`user-${walletAddress}`);
         logger.info(`Client ${socket.id} joined user room: ${walletAddress}`);
       });
-      
+
       // Handle workflow status updates
       socket.on('workflow-status', (data) => {
         this.io.to(`agent-${data.agentId}`).emit('workflow-update', data);
       });
-      
+
       socket.on('disconnect', () => {
         logger.info('Client disconnected:', socket.id);
       });
@@ -204,10 +204,10 @@ class N8NIntegrationService {
     // Global error handler
     this.app.use((error, req, res, next) => {
       logger.error('Unhandled error:', error);
-      
+
       res.status(error.status || 500).json({
-        error: process.env.NODE_ENV === 'production' 
-          ? 'Internal server error' 
+        error: process.env.NODE_ENV === 'production'
+          ? 'Internal server error'
           : error.message,
         timestamp: new Date().toISOString(),
         path: req.path
@@ -242,12 +242,12 @@ class N8NIntegrationService {
 
   async stop() {
     logger.info('Shutting down services...');
-    
+
     // Close database connections
     if (this.services.mongodb) {
       await this.services.mongodb.disconnect();
     }
-    
+
     // Close server
     this.server.close(() => {
       logger.info('Server stopped');
