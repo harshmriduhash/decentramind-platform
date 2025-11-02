@@ -172,8 +172,8 @@ const TokenSaleInfo: React.FC<TokenSaleInfoProps> = ({ sale, isWhitelisted, onSe
             📅 Vesting Schedule
           </Typography>
           <Typography variant="caption" sx={{ color: '#b0b0b0' }}>
-            TGE: {sale.vestingSchedule.tgePercentage}% | 
-            Cliff: {sale.vestingSchedule.cliffDuration} days | 
+            TGE: {sale.vestingSchedule.tgePercentage}% |
+            Cliff: {sale.vestingSchedule.cliffDuration} days |
             Duration: {sale.vestingSchedule.vestingDuration} days
           </Typography>
         </Box>
