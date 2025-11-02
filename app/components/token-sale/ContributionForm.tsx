@@ -89,7 +89,7 @@ const ContributionForm: React.FC<ContributionFormProps> = ({ sale, isWhitelisted
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
     if (!publicKey) {
       setError('Please connect your wallet');
@@ -99,7 +99,7 @@ const ContributionForm: React.FC<ContributionFormProps> = ({ sale, isWhitelisted
     try {
       setLoading(true);
       const saleService = SaleService.getInstance();
-      
+
       await saleService.submitContribution(
         sale.id,
         parseFloat(amount),
@@ -135,7 +135,7 @@ const ContributionForm: React.FC<ContributionFormProps> = ({ sale, isWhitelisted
             Whitelist Required
           </Typography>
           <Typography variant="body1" sx={{ color: '#b0b0b0', mb: 3 }}>
-            You must be whitelisted to participate in this token sale. 
+            You must be whitelisted to participate in this token sale.
             Please apply for whitelist access or wait for approval.
           </Typography>
           <Button
