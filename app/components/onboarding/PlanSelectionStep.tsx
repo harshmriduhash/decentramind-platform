@@ -114,21 +114,19 @@ const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({ data, onUpdate, o
         <div className="bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => handlePlanTypeChange('monthly')}
-            className={`px-6 py-2 rounded-md font-medium transition-all ${
-              formData.planType === 'monthly'
+            className={`px-6 py-2 rounded-md font-medium transition-all ${formData.planType === 'monthly'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
-            }`}
+              }`}
           >
             Monthly
           </button>
           <button
             onClick={() => handlePlanTypeChange('yearly')}
-            className={`px-6 py-2 rounded-md font-medium transition-all relative ${
-              formData.planType === 'yearly'
+            className={`px-6 py-2 rounded-md font-medium transition-all relative ${formData.planType === 'yearly'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
-            }`}
+              }`}
           >
             Yearly
             <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
@@ -144,11 +142,10 @@ const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({ data, onUpdate, o
           <motion.div
             key={plan.id}
             whileHover={{ scale: 1.02 }}
-            className={`relative rounded-2xl border-2 p-6 cursor-pointer transition-all ${
-              formData.planTier === plan.id
+            className={`relative rounded-2xl border-2 p-6 cursor-pointer transition-all ${formData.planTier === plan.id
                 ? `border-${plan.color}-500 bg-${plan.color}-50`
                 : 'border-gray-200 hover:border-gray-300'
-            }`}
+              }`}
             onClick={() => handlePlanTierChange(plan.id as any)}
           >
             {plan.popular && (
@@ -184,11 +181,10 @@ const PlanSelectionStep: React.FC<PlanSelectionStepProps> = ({ data, onUpdate, o
               ))}
             </ul>
 
-            <div className={`w-full py-2 rounded-lg text-center font-medium ${
-              formData.planTier === plan.id
+            <div className={`w-full py-2 rounded-lg text-center font-medium ${formData.planTier === plan.id
                 ? `bg-${plan.color}-500 text-white`
                 : 'bg-gray-100 text-gray-700'
-            }`}>
+              }`}>
               {formData.planTier === plan.id ? 'Selected' : 'Select Plan'}
             </div>
           </motion.div>
