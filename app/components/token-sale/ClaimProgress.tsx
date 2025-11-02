@@ -52,7 +52,7 @@ const ClaimProgress: React.FC<ClaimProgressProps> = ({ sale, walletAddress }) =>
     try {
       setClaimLoading(true);
       const claimService = ClaimService.getInstance();
-      
+
       await claimService.submitClaim(
         claim.tokenSaleId,
         walletAddress,
@@ -70,27 +70,27 @@ const ClaimProgress: React.FC<ClaimProgressProps> = ({ sale, walletAddress }) =>
 
   const calculateVestingProgress = () => {
     if (!sale) return 0;
-    
+
     const now = new Date();
     const startDate = new Date(sale.startDate);
     const endDate = new Date(sale.endDate);
-    
+
     if (now < startDate) return 0;
     if (now > endDate) return 100;
-    
+
     const totalDuration = endDate.getTime() - startDate.getTime();
     const elapsed = now.getTime() - startDate.getTime();
-    
+
     return (elapsed / totalDuration) * 100;
   };
 
   const getNextVestingDate = () => {
     if (!sale) return null;
-    
+
     const now = new Date();
     const tgeDate = new Date(sale.startDate);
     const nextVesting = new Date(tgeDate.getTime() + (sale.vestingSchedule.vestingFrequency * 24 * 60 * 60 * 1000));
-    
+
     return nextVesting > now ? nextVesting : null;
   };
 
