@@ -101,9 +101,8 @@ const HospitalInfoStep: React.FC<HospitalInfoStepProps> = ({ data, onUpdate, onN
             type="text"
             value={formData.hospitalName}
             onChange={(e) => handleInputChange('hospitalName', e.target.value)}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${
-              errors.hospitalName ? 'border-red-500' : 'border-gray-300'
-            }`}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${errors.hospitalName ? 'border-red-500' : 'border-gray-300'
+              }`}
             placeholder="Enter your hospital name"
           />
           {errors.hospitalName && (
@@ -121,9 +120,8 @@ const HospitalInfoStep: React.FC<HospitalInfoStepProps> = ({ data, onUpdate, onN
               type="text"
               value={formData.adminName}
               onChange={(e) => handleInputChange('adminName', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${
-                errors.adminName ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${errors.adminName ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="Your full name"
             />
             {errors.adminName && (
@@ -139,9 +137,8 @@ const HospitalInfoStep: React.FC<HospitalInfoStepProps> = ({ data, onUpdate, onN
               type="email"
               value={formData.adminEmail}
               onChange={(e) => handleInputChange('adminEmail', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${
-                errors.adminEmail ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${errors.adminEmail ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="admin@hospital.com"
             />
             {errors.adminEmail && (
@@ -160,9 +157,8 @@ const HospitalInfoStep: React.FC<HospitalInfoStepProps> = ({ data, onUpdate, onN
               type="tel"
               value={formData.adminPhone}
               onChange={(e) => handleInputChange('adminPhone', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${
-                errors.adminPhone ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${errors.adminPhone ? 'border-red-500' : 'border-gray-300'
+                }`}
               placeholder="+1 (555) 123-4567"
             />
             {errors.adminPhone && (
@@ -177,9 +173,8 @@ const HospitalInfoStep: React.FC<HospitalInfoStepProps> = ({ data, onUpdate, onN
             <select
               value={formData.hospitalSize}
               onChange={(e) => handleInputChange('hospitalSize', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${
-                errors.hospitalSize ? 'border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${errors.hospitalSize ? 'border-red-500' : 'border-gray-300'
+                }`}
             >
               <option value="">Select hospital size</option>
               {hospitalSizes.map((size) => (
@@ -203,9 +198,8 @@ const HospitalInfoStep: React.FC<HospitalInfoStepProps> = ({ data, onUpdate, onN
             value={formData.hospitalAddress}
             onChange={(e) => handleInputChange('hospitalAddress', e.target.value)}
             rows={3}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${
-              errors.hospitalAddress ? 'border-red-500' : 'border-gray-300'
-            }`}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white ${errors.hospitalAddress ? 'border-red-500' : 'border-gray-300'
+              }`}
             placeholder="Enter complete hospital address"
           />
           {errors.hospitalAddress && (
