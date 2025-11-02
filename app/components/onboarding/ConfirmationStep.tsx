@@ -23,8 +23,8 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ data, onSubmit, onP
   };
 
   const selectedPlan = plans[data.planSelection.planTier];
-  const planPrice = data.planSelection.planType === 'yearly' 
-    ? selectedPlan.yearlyPrice 
+  const planPrice = data.planSelection.planType === 'yearly'
+    ? selectedPlan.yearlyPrice
     : selectedPlan.monthlyPrice;
 
   const handleSubmit = () => {
@@ -139,7 +139,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ data, onSubmit, onP
               <p className="font-semibold text-gray-900">{data.doctorInvites.totalDoctors}</p>
             </div>
           </div>
-          
+
           {data.doctorInvites.emails.length > 0 && (
             <div className="mt-4">
               <p className="text-gray-600 mb-2">Email addresses:</p>
@@ -168,8 +168,8 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ data, onSubmit, onP
               {/* NFT-style gradient border */}
               <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-teal-400 animate-pulse">
                 <div className="w-full h-full rounded-full overflow-hidden bg-gray-800 flex items-center justify-center">
-                  <img 
-                    src="https://ipfs.io/ipfs/bafybeidki742oakaxqxdk5u6s7zz4iinaszyyw62mpcmxmkcpo3m3qsm6a/david_859400_AI_Healthcare_Assistant_soft_glowing_humanoid_fo_249dd97f-c4a7-45a3-b0b6-ed8e71e6b9be_0.png" 
+                  <img
+                    src="https://ipfs.io/ipfs/bafybeidki742oakaxqxdk5u6s7zz4iinaszyyw62mpcmxmkcpo3m3qsm6a/david_859400_AI_Healthcare_Assistant_soft_glowing_humanoid_fo_249dd97f-c4a7-45a3-b0b6-ed8e71e6b9be_0.png"
                     alt="Care Orchestrator Avatar - AI Healthcare Assistant"
                     className="w-full h-full object-cover rounded-full"
                     loading="lazy"
@@ -178,7 +178,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ data, onSubmit, onP
                       e.currentTarget.nextElementSibling.style.display = 'flex';
                     }}
                   />
-                  <div className="w-full h-full flex items-center justify-center text-white text-3xl hidden" style={{display: 'none'}}>
+                  <div className="w-full h-full flex items-center justify-center text-white text-3xl hidden" style={{ display: 'none' }}>
                     🩺
                   </div>
                 </div>
@@ -297,11 +297,10 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({ data, onSubmit, onP
           whileTap={{ scale: agreedToTerms ? 0.98 : 1 }}
           onClick={handleSubmit}
           disabled={!agreedToTerms || isLoading}
-          className={`px-8 py-3 rounded-lg font-semibold transition-all ${
-            agreedToTerms && !isLoading
+          className={`px-8 py-3 rounded-lg font-semibold transition-all ${agreedToTerms && !isLoading
               ? 'bg-gradient-to-r from-blue-500 to-green-500 text-white hover:shadow-lg'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
+            }`}
         >
           {isLoading ? (
             <div className="flex items-center">
