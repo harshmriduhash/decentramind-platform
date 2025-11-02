@@ -31,7 +31,7 @@ const InviteDoctorsStep: React.FC<InviteDoctorsStepProps> = ({ data, onUpdate, o
     if (!emailInput.trim()) return;
 
     const email = emailInput.trim().toLowerCase();
-    
+
     if (!validateEmail(email)) {
       setErrors(['Please enter a valid email address']);
       return;
@@ -47,7 +47,7 @@ const InviteDoctorsStep: React.FC<InviteDoctorsStepProps> = ({ data, onUpdate, o
       emails: [...prev.emails, email],
       totalDoctors: prev.emails.length + 1,
     }));
-    
+
     setEmailInput('');
     setErrors([]);
   };
@@ -119,7 +119,7 @@ const InviteDoctorsStep: React.FC<InviteDoctorsStepProps> = ({ data, onUpdate, o
         {/* Manual Email Entry */}
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Individual Emails</h3>
-          
+
           <div className="space-y-4">
             <div className="flex gap-2">
               <input
@@ -170,7 +170,7 @@ const InviteDoctorsStep: React.FC<InviteDoctorsStepProps> = ({ data, onUpdate, o
         {/* CSV Upload */}
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Upload CSV File</h3>
-          
+
           <div className="space-y-4">
             <div
               onClick={() => fileInputRef.current?.click()}
