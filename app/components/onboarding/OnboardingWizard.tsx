@@ -118,7 +118,7 @@ const OnboardingWizard: React.FC = () => {
       if (response.ok) {
         // Clear saved data
         localStorage.removeItem('care-orchestrator-onboarding');
-        
+
         // Redirect to dashboard
         router.push('/dashboard');
       } else {
@@ -184,11 +184,10 @@ const OnboardingWizard: React.FC = () => {
           {steps.map((step, index) => (
             <div key={step.id} className="flex items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${
-                  currentStep >= step.id
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${currentStep >= step.id
                     ? 'bg-white text-blue-500'
                     : 'bg-blue-400 text-white'
-                }`}
+                  }`}
               >
                 {step.id}
               </div>
