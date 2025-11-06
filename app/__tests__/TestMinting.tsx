@@ -123,14 +123,14 @@ const TestMinting: React.FC = () => {
   const [coordinationTask, setCoordinationTask] = useState('');
   const [coordinationResponse, setCoordinationResponse] = useState('');
   const [selectedAgentType, setSelectedAgentType] = useState<'master' | 'sub'>('master');
-  
+
   // Direct Sub-Agent Interaction States
   const [showSubAgentChat, setShowSubAgentChat] = useState(false);
   const [selectedSubAgent, setSelectedSubAgent] = useState<Agent | null>(null);
   const [subAgentMessage, setSubAgentMessage] = useState('');
   const [subAgentResponse, setSubAgentResponse] = useState('');
-  const [subAgentChatHistory, setSubAgentChatHistory] = useState<Array<{role: 'user' | 'agent', message: string}>>([]);
-  
+  const [subAgentChatHistory, setSubAgentChatHistory] = useState<Array<{ role: 'user' | 'agent', message: string }>>([]);
+
   // Voice system state
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -148,9 +148,9 @@ const TestMinting: React.FC = () => {
   const [orchestrationTask, setOrchestrationTask] = useState('');
   const [orchestrationResult, setOrchestrationResult] = useState('');
   const [activeTab, setActiveTab] = useState<'agents' | 'marketplace' | 'analytics' | 'orchestrator'>('agents');
-  
+
   // Monetization and evolution system
-  const [evolutionProgress, setEvolutionProgress] = useState<{[key: string]: number}>({});
+  const [evolutionProgress, setEvolutionProgress] = useState<{ [key: string]: number }>({});
   const [monetizationStats, setMonetizationStats] = useState({
     totalRevenue: 0,
     upgradesSold: 0,
@@ -174,7 +174,7 @@ const TestMinting: React.FC = () => {
   const [selectedSubAgents, setSelectedSubAgents] = useState<Agent[]>([]);
   const [showDelegationDialog, setShowDelegationDialog] = useState(false);
   const [delegationResult, setDelegationResult] = useState('');
-  const [suggestedNewAgent, setSuggestedNewAgent] = useState<{domain: string, type: 'master' | 'sub'} | null>(null);
+  const [suggestedNewAgent, setSuggestedNewAgent] = useState<{ domain: string, type: 'master' | 'sub' } | null>(null);
 
   const domains = agentService.getAvailableDomains().map(domain => ({
     name: domain.name,
@@ -191,11 +191,11 @@ const TestMinting: React.FC = () => {
       setLoading(true);
       try {
         console.log('Loading agents for wallet:', publicKey.toBase58());
-        
+
         // Load ALL agents first (for debugging)
         const allAgents = await agentService.getAgents();
         console.log('All agents from service:', allAgents);
-        
+
         // Filter for user agents - only wallet addresses are valid
         const walletAddress = publicKey.toBase58();
         const userAgents = allAgents.filter(agent => {
@@ -203,14 +203,14 @@ const TestMinting: React.FC = () => {
           return agent.owner === walletAddress;
         });
         console.log('User agents:', userAgents);
-        
+
         // If no agents found, create some test agents
         if (userAgents.length === 0) {
           console.log('No agents found, creating test agents...');
           await createTestAgents();
           // Reload agents after creating test ones
           const updatedAgents = await agentService.getAgents();
-                    const updatedUserAgents = updatedAgents.filter(agent =>
+          const updatedUserAgents = updatedAgents.filter(agent =>
             agent.owner === walletAddress
           );
           setMintedAgents(updatedUserAgents);
@@ -227,7 +227,7 @@ const TestMinting: React.FC = () => {
             }
             return agent;
           });
-          
+
           console.log('Processed agents:', processedAgents);
           setMintedAgents(processedAgents as Agent[]);
         }
@@ -249,43 +249,43 @@ const TestMinting: React.FC = () => {
     const initializeServices = async () => {
       if (connected && publicKey) {
         setWalletConnected(true);
-        
+
         // Initialize agent service
         await agentService.initialize();
         loadAgents();
-        
+
         initializeVoiceSystem(); // Initialize voice system
-        
+
         // Initialize solana service
         const walletState = {
-        publicKey,
-        connected,
-        signTransaction,
-        sendTransaction: async (transaction: any, connection: any) => {
-          // Mock transaction for development
-          console.log('Mock transaction sent:', transaction);
-          return 'mock-signature-' + Date.now();
-        },
-        signAllTransactions: async (transactions: any[]) => {
-          return transactions.map(tx => tx); // Mock implementation
-        },
-        signMessage: async (message: Uint8Array) => {
-          return new Uint8Array(); // Mock implementation
-        },
-        disconnect: () => {},
-        select: () => {},
-        wallet: null,
-        connecting: false,
-        disconnecting: false
-      };
-      
-      solanaService.initialize(walletState as any, WalletAdapterNetwork.Devnet);
-    } else {
-      setWalletConnected(false);
-      setMintedAgents([]);
-    }
+          publicKey,
+          connected,
+          signTransaction,
+          sendTransaction: async (transaction: any, connection: any) => {
+            // Mock transaction for development
+            console.log('Mock transaction sent:', transaction);
+            return 'mock-signature-' + Date.now();
+          },
+          signAllTransactions: async (transactions: any[]) => {
+            return transactions.map(tx => tx); // Mock implementation
+          },
+          signMessage: async (message: Uint8Array) => {
+            return new Uint8Array(); // Mock implementation
+          },
+          disconnect: () => { },
+          select: () => { },
+          wallet: null,
+          connecting: false,
+          disconnecting: false
+        };
+
+        solanaService.initialize(walletState as any, WalletAdapterNetwork.Devnet);
+      } else {
+        setWalletConnected(false);
+        setMintedAgents([]);
+      }
     };
-    
+
     initializeServices();
   }, [connected, publicKey, signTransaction]);
 
@@ -303,7 +303,7 @@ const TestMinting: React.FC = () => {
         personality: 'Coordinator'
       };
       const result = await agentService.createMasterAgent(userId, masterAgentData);
-      
+
       if (result.success) {
         showSuccess('Master Agent created successfully!');
         await loadAgents();
@@ -325,7 +325,7 @@ const TestMinting: React.FC = () => {
 
       const userId = publicKey.toBase58();
       const result = await agentService.evolveMasterAgent(userId, agentId);
-      
+
       if (result.success && result.evolutionDetails) {
         const details = result.evolutionDetails;
         const evolutionMessage = `🚀 **${details.reason}**
@@ -337,7 +337,7 @@ const TestMinting: React.FC = () => {
 • Evolution Stage: ${details.newStage}
 
 💡 **What Changed**: ${details.reason}`;
-        
+
         showSuccess(evolutionMessage);
         await loadAgents();
       } else {
@@ -363,15 +363,15 @@ const TestMinting: React.FC = () => {
 
       const userId = publicKey.toBase58();
       const result = await agentService.coordinateAgents(userId, coordinationTask);
-      
+
       if (result.success && result.response) {
         setCoordinationResponse(result.response);
-        
+
         // Show success message with coordination summary
         const lines = result.response.split('\n');
         const summary = lines.slice(0, 3).join('\n');
         showSuccess(`🤖 Coordination successful!\n\n${summary}`);
-        
+
         if (voiceEnabled) {
           speakText('Agent coordination completed successfully', 'Master Agent');
         }
@@ -394,45 +394,45 @@ const TestMinting: React.FC = () => {
 
   const handleSendMessageToSubAgent = async () => {
     if (!selectedSubAgent || !subAgentMessage.trim()) return;
-    
+
     try {
       setLoading(true);
-      
+
       // Add user message to chat history
       const userMessage = { role: 'user' as const, message: subAgentMessage };
       setSubAgentChatHistory(prev => [...prev, userMessage]);
-      
+
       // Generate agent response
       const response = await generateSubAgentResponse(selectedSubAgent, subAgentMessage);
-      
+
       // Add agent response to chat history
       const agentMessage = { role: 'agent' as const, message: response };
       setSubAgentChatHistory(prev => [...prev, agentMessage]);
-      
+
       // Speak the response if voice is enabled
       if (voiceEnabled) {
         // Extract just the text content for speech (remove markdown formatting)
         const cleanText = response.replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold formatting
-                                 .replace(/💚|🤖|🎓|🎨|⚙️|💼|🔬/g, '') // Remove emojis
-                                 .replace(/\n\n/g, '. ') // Replace double newlines with periods
-                                 .replace(/\n/g, '. '); // Replace single newlines with periods
-        
+          .replace(/💚|🤖|🎓|🎨|⚙️|💼|🔬/g, '') // Remove emojis
+          .replace(/\n\n/g, '. ') // Replace double newlines with periods
+          .replace(/\n/g, '. '); // Replace single newlines with periods
+
         speakText(cleanText, selectedSubAgent.name);
       }
-      
+
       // Award XP to the agent
       const xpGained = Math.floor(Math.random() * 20) + 10; // 10-30 XP
-      setMintedAgents(prev => prev.map(agent => 
-        agent.id === selectedSubAgent.id 
+      setMintedAgents(prev => prev.map(agent =>
+        agent.id === selectedSubAgent.id
           ? { ...agent, xp: agent.xp + xpGained }
           : agent
       ));
-      
+
       setSubAgentMessage('');
       setSubAgentResponse(response);
-      
+
       showSuccess(`💬 Message sent! ${selectedSubAgent.name} gained +${xpGained} XP`);
-      
+
     } catch (error) {
       console.error('Error sending message to sub-agent:', error);
       showError('Failed to send message to agent');
@@ -446,9 +446,9 @@ const TestMinting: React.FC = () => {
     const domain = agent.domain.toLowerCase();
     const personality = agent.personality.toLowerCase();
     const userMessage = message.toLowerCase();
-    
+
     let response = '';
-    
+
     // Health & Wellness Agent Responses
     if (domain.includes('health') || domain.includes('wellness')) {
       if (userMessage.includes('fitness plan') || userMessage.includes('workout')) {
@@ -499,7 +499,7 @@ const TestMinting: React.FC = () => {
     else {
       response = `🤖 **${agent.name}** (${agent.domain} Agent):\n\nHello! I'm your ${agent.domain} specialist with a ${personality} personality. I'm here to help you with ${agent.domain.toLowerCase()} related tasks and challenges.\n\nHow can I assist you today?`;
     }
-    
+
     return response;
   };
 
@@ -508,18 +508,18 @@ const TestMinting: React.FC = () => {
     try {
       // Simulate task assignment and completion
       const taskResponse = await generateSubAgentResponse(agent, task);
-      
+
       // Award XP for task completion
-      await agentService.updateAgent(agent.id!, { 
-        xp: agent.xp + 10 
+      await agentService.updateAgent(agent.id!, {
+        xp: agent.xp + 10
       });
-      
+
       showSuccess(`Task assigned to ${agent.name}! +10 XP gained`);
-      
+
       // Refresh agents list
       const agents = await agentService.getAgents(publicKey?.toBase58());
       setMintedAgents(agents);
-      
+
     } catch (error) {
       console.error('Task assignment error:', error);
       showError('Failed to assign task to Sub-Agent');
@@ -628,15 +628,15 @@ const TestMinting: React.FC = () => {
             lastActive: new Date().toISOString()
           }
         });
-        
+
         if (result.success) {
           // Show success with blockchain signature
-          const signature = result.blockchainSignature ? 
-            `Blockchain Signature: ${result.blockchainSignature.slice(0, 8)}...` : 
+          const signature = result.blockchainSignature ?
+            `Blockchain Signature: ${result.blockchainSignature.slice(0, 8)}...` :
             'Transaction confirmed';
-          
+
           showSuccess(`Agent "${agentName}" minted successfully! ${signature}`);
-          
+
           // Show additional details
           if (result.burnedAmount) {
             showInfo(`DMT burned: ${result.burnedAmount.toFixed(2)} DMT (30% of minting fee)`);
@@ -644,7 +644,7 @@ const TestMinting: React.FC = () => {
           if (result.xpEarned) {
             showInfo(`XP earned: ${result.xpEarned} XP`);
           }
-          
+
           // Reload agents using the loadAgents function
           await loadAgents();
         } else {
@@ -700,10 +700,10 @@ const TestMinting: React.FC = () => {
         if (agent.id) {
           await agentService.deleteAgent(agent.id);
         }
-        
+
         // Update local state
         setMintedAgents(prev => prev.filter(a => a.id !== agent.id));
-        
+
         showSuccess(`Agent ${agent.name} has been deleted successfully.`);
       }
     } catch (error) {
@@ -715,7 +715,7 @@ const TestMinting: React.FC = () => {
   const handleSaveEdit = async () => {
     try {
       if (!selectedAgent) return;
-      
+
       // Update agent in database
       if (selectedAgent?.id) {
         // Update agent in database
@@ -724,14 +724,14 @@ const TestMinting: React.FC = () => {
           description: editAgentDescription
         });
       }
-      
+
       // Update local state
-      setMintedAgents(prev => prev.map(agent => 
-        agent.id === selectedAgent.id 
+      setMintedAgents(prev => prev.map(agent =>
+        agent.id === selectedAgent.id
           ? { ...agent, name: editAgentName, description: editAgentDescription }
           : agent
       ));
-      
+
       setShowEditDialog(false);
       setSelectedAgent(null);
       showSuccess('Agent updated successfully!');
@@ -747,11 +747,11 @@ const TestMinting: React.FC = () => {
         showError('No agent selected or wallet not connected');
         return;
       }
-      
+
       showInfo('Upgrade feature coming soon!');
       setShowUpgradeDialog(false);
       setSelectedAgent(null);
-      
+
     } catch (error) {
       console.error('Error upgrading agent:', error);
       showError(`Failed to upgrade agent: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -864,7 +864,7 @@ const TestMinting: React.FC = () => {
       const result = await agentService.performDeepResearch(agent.id, query);
       if (result.success && result.results) {
         showSuccess(`Research completed: ${result.results.summary}`);
-        
+
         if (voiceEnabled) {
           speakText(`Research completed. Found ${result.results.sources.length} sources for ${query}`, 'System');
         }
@@ -898,30 +898,30 @@ const TestMinting: React.FC = () => {
 
   const speakText = (text: string, agentName: string) => {
     if (!speechSynthesis.current || !voiceEnabled) return;
-    
+
     // Stop any current speech
     speechSynthesis.current.cancel();
-    
+
     // Create speech utterance
     const utterance = new SpeechSynthesisUtterance(text);
-    
+
     // Set voice based on agent personality
     const voices = speechSynthesis.current.getVoices();
     const agent = selectedSubAgent;
-    
+
     if (agent) {
       const personality = agent.personality.toLowerCase();
-      
+
       // Select voice based on personality
       if (personality.includes('motivational') || personality.includes('energetic')) {
         // Find a more energetic voice
-        const energeticVoice = voices.find((voice: any) => 
+        const energeticVoice = voices.find((voice: any) =>
           voice.name.includes('Samantha') || voice.name.includes('Alex') || voice.name.includes('Google UK English Female')
         );
         if (energeticVoice) utterance.voice = energeticVoice;
       } else if (personality.includes('calm') || personality.includes('therapeutic')) {
         // Find a calmer voice
-        const calmVoice = voices.find((voice: any) => 
+        const calmVoice = voices.find((voice: any) =>
           voice.name.includes('Victoria') || voice.name.includes('Google UK English Male') || voice.name.includes('Daniel')
         );
         if (calmVoice) utterance.voice = calmVoice;
@@ -931,27 +931,27 @@ const TestMinting: React.FC = () => {
         if (defaultVoice) utterance.voice = defaultVoice;
       }
     }
-    
+
     // Set speech properties
     utterance.rate = 0.9; // Slightly slower for clarity
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
-    
+
     // Event handlers
     utterance.onstart = () => {
       setIsSpeaking(true);
       showInfo(`🎤 ${agentName} is speaking...`);
     };
-    
+
     utterance.onend = () => {
       setIsSpeaking(false);
     };
-    
+
     utterance.onerror = (event) => {
       setIsSpeaking(false);
       showError(`Speech error: ${event.error}`);
     };
-    
+
     // Speak the text
     speechSynthesis.current.speak(utterance);
   };
@@ -1018,21 +1018,21 @@ const TestMinting: React.FC = () => {
   const loadAgentAnalytics = async () => {
     try {
       console.log('Loading agent analytics...');
-      
+
       // Mock analytics data for now
       const analyticsData = {
         totalAgents: mintedAgents.length,
         activeAgents: mintedAgents.filter(agent => agent.status === 'active').length,
         totalXP: mintedAgents.reduce((sum, agent) => sum + agent.xp, 0),
-        averageLevel: mintedAgents.length > 0 ? 
+        averageLevel: mintedAgents.length > 0 ?
           mintedAgents.reduce((sum, agent) => sum + agent.level, 0) / mintedAgents.length : 0,
         performance: {
           tasksCompleted: mintedAgents.reduce((sum, agent) => sum + (agent.performance?.tasksCompleted || 0), 0),
-          averageSuccessRate: mintedAgents.length > 0 ? 
+          averageSuccessRate: mintedAgents.length > 0 ?
             mintedAgents.reduce((sum, agent) => sum + (agent.performance?.successRate || 0), 0) / mintedAgents.length : 0
         }
       };
-      
+
       console.log('Analytics data:', analyticsData);
       return analyticsData;
     } catch (error) {
@@ -1058,30 +1058,30 @@ const TestMinting: React.FC = () => {
 
     try {
       setLoading(true);
-      
+
       // Simulate advanced agent orchestration
       const availableAgents = mintedAgents.filter(agent => agent.status === 'active');
       const task = orchestrationTask.toLowerCase();
-      
+
       // Analyze task and select appropriate agents
       let selectedAgents = [];
       let strategy = '';
-      
+
       if (task.includes('fitness') || task.includes('workout') || task.includes('health')) {
-        selectedAgents = availableAgents.filter(agent => 
-          agent.domain.toLowerCase().includes('health') || 
+        selectedAgents = availableAgents.filter(agent =>
+          agent.domain.toLowerCase().includes('health') ||
           agent.domain.toLowerCase().includes('wellness')
         );
         strategy = 'Health & Wellness Coordination';
       } else if (task.includes('learn') || task.includes('study') || task.includes('education')) {
-        selectedAgents = availableAgents.filter(agent => 
-          agent.domain.toLowerCase().includes('learning') || 
+        selectedAgents = availableAgents.filter(agent =>
+          agent.domain.toLowerCase().includes('learning') ||
           agent.domain.toLowerCase().includes('education')
         );
         strategy = 'Learning & Education Coordination';
       } else if (task.includes('creative') || task.includes('write') || task.includes('design')) {
-        selectedAgents = availableAgents.filter(agent => 
-          agent.domain.toLowerCase().includes('creative') || 
+        selectedAgents = availableAgents.filter(agent =>
+          agent.domain.toLowerCase().includes('creative') ||
           agent.domain.toLowerCase().includes('art')
         );
         strategy = 'Creative & Design Coordination';
@@ -1096,7 +1096,7 @@ const TestMinting: React.FC = () => {
         `**Strategy**: ${strategy}\n` +
         `**Coordinating**: ${selectedAgents.length} specialized agents\n\n` +
         `**Selected Agents**:\n` +
-        selectedAgents.map(agent => 
+        selectedAgents.map(agent =>
           `• ${agent.name} (${agent.domain} - Level ${agent.level})`
         ).join('\n') + '\n\n' +
         `**Orchestrated Response**:\n` +
@@ -1111,7 +1111,7 @@ const TestMinting: React.FC = () => {
 
       setOrchestrationResult(response);
       showSuccess('Agent orchestration completed successfully!');
-      
+
     } catch (error) {
       console.error('Orchestration error:', error);
       showError('Failed to orchestrate agents');
@@ -1125,13 +1125,13 @@ const TestMinting: React.FC = () => {
       setLoading(true);
       // Mock purchase - replace with actual blockchain transaction
       showInfo('Processing purchase transaction...');
-      
+
       // Simulate transaction delay
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       showSuccess('Agent purchased successfully!');
       setShowMarketplace(false);
-      
+
     } catch (error) {
       console.error('Purchase error:', error);
       showError('Failed to purchase agent');
@@ -1150,7 +1150,7 @@ const TestMinting: React.FC = () => {
 
       const walletAddress = publicKey.toBase58();
       console.log('Creating test agents for wallet:', walletAddress);
-      
+
       // Create test agents with the wallet address as owner
       const testAgents = [
         {
@@ -1246,9 +1246,9 @@ const TestMinting: React.FC = () => {
           console.error(`Failed to create ${agentData.name}:`, error);
         }
       }
-      
+
       showSuccess('Test agents created successfully!');
-      
+
     } catch (error) {
       console.error('Error creating test agents:', error);
       showError('Failed to create test agents');
@@ -1264,12 +1264,12 @@ const TestMinting: React.FC = () => {
       }
 
       const upgradeCost = calculateUpgradeCost(agent.level);
-      
+
       // Show upgrade dialog with cost
       setSelectedAgent(agent);
       setUpgradeCost(upgradeCost);
       setShowUpgradeDialog(true);
-      
+
       if (voiceEnabled) {
         speakText(`Upgrade cost for ${agent.name} is ${upgradeCost} DMT`, 'System');
       }
@@ -1336,11 +1336,11 @@ const TestMinting: React.FC = () => {
 
       const userId = publicKey.toBase58();
       const allAgents = await agentService.getAgents(userId);
-      
+
       // Find duplicates by name and domain
       const duplicates = [];
       const seen = new Set();
-      
+
       for (const agent of allAgents) {
         const key = `${agent.name}-${agent.domain}`;
         if (seen.has(key)) {
@@ -1349,17 +1349,17 @@ const TestMinting: React.FC = () => {
           seen.add(key);
         }
       }
-      
+
       if (duplicates.length === 0) {
         showSuccess('No duplicate agents found!');
         return;
       }
-      
+
       showInfo(`Found ${duplicates.length} duplicate agents. Consider deleting duplicates to improve coordination.`);
-      
+
       // Show duplicates in console for debugging
       console.log('Duplicate agents found:', duplicates.map(d => `${d.name} (${d.domain})`));
-      
+
     } catch (error) {
       console.error('Error cleaning up agents:', error);
       showError('Failed to analyze agents');
@@ -1368,23 +1368,23 @@ const TestMinting: React.FC = () => {
 
   const getAgentRecommendations = () => {
     const recommendations = [];
-    
+
     // Check for missing domain agents
     const domains = ['Learning', 'Health & Wellness', 'Technical', 'Creative', 'Business', 'Science'];
     const existingDomains = mintedAgents.map(agent => agent.domain);
-    
+
     for (const domain of domains) {
       if (!existingDomains.includes(domain)) {
         recommendations.push(`Create a ${domain} agent for better task coverage`);
       }
     }
-    
+
     // Check for low-level agents
     const lowLevelAgents = mintedAgents.filter(agent => agent.level === 1 && agent.xp < 50);
     if (lowLevelAgents.length > 0) {
       recommendations.push(`Upgrade ${lowLevelAgents.length} low-level agents for better performance`);
     }
-    
+
     return recommendations;
   };
 
@@ -1413,7 +1413,7 @@ const TestMinting: React.FC = () => {
 
       // First, ensure we have the latest agents loaded
       await loadAgents();
-      
+
       // Check if the agent still exists
       const agent = mintedAgents.find(a => a.id === selectedAgentForEvolution.id);
       if (!agent) {
@@ -1430,10 +1430,10 @@ const TestMinting: React.FC = () => {
       });
 
       const result = await agentService.evolveAgentWithDMT(userId, agent.id!, dmtAmount);
-      
+
       if (result.success && result.evolutionDetails) {
-         const details = result.evolutionDetails;
-         const evolutionMessage = `🚀 **${details.reason}**
+        const details = result.evolutionDetails;
+        const evolutionMessage = `🚀 **${details.reason}**
          
 💰 **DMT Cost**: ${details.dmtCost} DMT
 🧠 **LLM Upgrade**: ${details.previousLLM} → ${details.newLLM}
@@ -1454,7 +1454,7 @@ const TestMinting: React.FC = () => {
 • Total Upgrades: +1
 • Total DMT Spent: +${details.dmtCost}
 • Domain Expertise: +10%`;
-        
+
         showSuccess(evolutionMessage);
         setShowEvolutionDialog(false);
         await loadAgents();
@@ -1492,11 +1492,11 @@ const TestMinting: React.FC = () => {
 
       // First, ensure we have the latest agents
       await loadAgents();
-      
+
       // Check if we have the required agents
       const masterAgents = mintedAgents.filter(agent => agent.type === 'master');
       const subAgents = mintedAgents.filter(agent => agent.type === 'sub');
-      
+
       console.log('Available agents:', { masterAgents: masterAgents.length, subAgents: subAgents.length });
 
       if (masterAgents.length === 0) {
@@ -1511,12 +1511,12 @@ const TestMinting: React.FC = () => {
 
       // Use the selected master agent or the first available one
       const activeMasterAgent = selectedMasterAgent || masterAgents[0];
-      
+
       // Analyze the actual task content
       const lowerTask = delegationTask.toLowerCase();
       let primaryDomain = 'General';
       let keywords: string[] = [];
-      
+
       // Proper task analysis
       if (lowerTask.includes('german') || lowerTask.includes('language') || lowerTask.includes('learn') || lowerTask.includes('teach')) {
         primaryDomain = 'Learning';
@@ -1550,21 +1550,21 @@ const TestMinting: React.FC = () => {
         const agentName = agent.name.toLowerCase();
         const agentSkills = agent.skills.map(skill => skill.toLowerCase());
         const keywordsLower = keywords.map(k => k.toLowerCase());
-        
+
         // Check domain match
         const domainMatch = agentDomain.includes(primaryDomain.toLowerCase()) ||
-                           agentDomain.includes('technical') && primaryDomain === 'Technical' ||
-                           agentDomain.includes('learning') && primaryDomain === 'Learning';
-        
+          agentDomain.includes('technical') && primaryDomain === 'Technical' ||
+          agentDomain.includes('learning') && primaryDomain === 'Learning';
+
         // Check name match
         const nameMatch = agentName.includes(primaryDomain.toLowerCase()) ||
-                         keywordsLower.some(keyword => agentName.includes(keyword));
-        
+          keywordsLower.some(keyword => agentName.includes(keyword));
+
         // Check skills match
-        const skillsMatch = agentSkills.some(skill => 
+        const skillsMatch = agentSkills.some(skill =>
           keywordsLower.some(keyword => skill.includes(keyword))
         );
-        
+
         console.log(`Agent ${agent.name} (${agent.domain}) matching:`, {
           domainMatch,
           nameMatch,
@@ -1572,7 +1572,7 @@ const TestMinting: React.FC = () => {
           primaryDomain,
           keywords
         });
-        
+
         return domainMatch || nameMatch || skillsMatch;
       });
 
@@ -1583,7 +1583,7 @@ const TestMinting: React.FC = () => {
 
       // Generate a coordinated response based on task type
       let taskResponse = '';
-      
+
       if (primaryDomain === 'Learning') {
         taskResponse = `📚 **German Language Learning Plan**:
 
@@ -1729,7 +1729,7 @@ ${taskResponse}
 
   const handleCreateSuggestedAgent = async () => {
     if (!suggestedNewAgent) return;
-    
+
     try {
       setAgentName(`New ${suggestedNewAgent.domain} Agent`);
       setSelectedDomain(suggestedNewAgent.domain);
@@ -1750,16 +1750,16 @@ ${taskResponse}
         <Typography variant="h3" sx={{ color: '#00ffff', fontWeight: 'bold', textAlign: 'center', mb: 3 }}>
           🚀 DecentraMind Labs - Enhanced AI Agent Platform
         </Typography>
-        
+
         {/* Session Status */}
         <SessionStatus />
-        
+
         {/* Navigation Tabs */}
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-          <Box sx={{ 
-            display: 'flex', 
-            background: 'rgba(25, 25, 25, 0.9)', 
-            borderRadius: 3, 
+          <Box sx={{
+            display: 'flex',
+            background: 'rgba(25, 25, 25, 0.9)',
+            borderRadius: 3,
             p: 0.5,
             border: '2px solid #00ffff'
           }}>
@@ -1803,8 +1803,8 @@ ${taskResponse}
       {activeTab === 'agents' && (
         <>
           {/* Master Agent System Explanation */}
-          <Card sx={{ 
-            background: 'rgba(25, 25, 25, 0.9)', 
+          <Card sx={{
+            background: 'rgba(25, 25, 25, 0.9)',
             border: '2px solid #00ffff',
             borderRadius: 3,
             mb: 4
@@ -1812,7 +1812,7 @@ ${taskResponse}
             <CardContent>
               <Typography variant="h5" sx={{ color: '#00ffff', mb: 2, fontWeight: 'bold' }}>
                 🧠 Enhanced Master Agent System
-      </Typography>
+              </Typography>
 
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
@@ -1826,7 +1826,7 @@ ${taskResponse}
                     • <strong>Delegates tasks</strong> to specialized sub-agents
                   </Typography>
                 </Grid>
-                
+
                 <Grid item xs={12} md={6}>
                   <Typography variant="h6" sx={{ color: '#ffc107', mb: 1 }}>
                     🤖 Sub-Agents (Specialists)
@@ -1839,7 +1839,7 @@ ${taskResponse}
                   </Typography>
                 </Grid>
               </Grid>
-              
+
               <Box sx={{ mt: 2, p: 2, background: 'rgba(0,255,255,0.1)', borderRadius: 2 }}>
                 <Typography variant="body2" sx={{ color: '#00ffff', fontWeight: 'bold' }}>
                   💡 <strong>Enhanced Features:</strong> Voice-enabled agents, advanced orchestration, marketplace trading, and comprehensive analytics!
@@ -1852,22 +1852,22 @@ ${taskResponse}
 
       {/* Marketplace Tab */}
       {activeTab === 'marketplace' && (
-        <Card sx={{ 
-          background: 'rgba(25, 25, 25, 0.9)', 
+        <Card sx={{
+          background: 'rgba(25, 25, 25, 0.9)',
           border: '2px solid #ffc107',
           borderRadius: 3,
           mb: 4
         }}>
-            <CardContent>
+          <CardContent>
             <Typography variant="h5" sx={{ color: '#ffc107', mb: 3, textAlign: 'center' }}>
               🏪 Agent Marketplace
             </Typography>
-            
+
             <Grid container spacing={3}>
               {agentListings.map((listing) => (
                 <Grid item xs={12} md={6} key={listing.id}>
-                  <Card sx={{ 
-                    background: 'rgba(255, 193, 7, 0.1)', 
+                  <Card sx={{
+                    background: 'rgba(255, 193, 7, 0.1)',
                     border: '2px solid #ffc107',
                     borderRadius: 2
                   }}>
@@ -1878,22 +1878,22 @@ ${taskResponse}
                       <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
                         {listing.description}
                       </Typography>
-                      
+
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                        <Chip 
+                        <Chip
                           label={listing.domain}
                           size="small"
                           sx={{ background: '#ffc107', color: 'black', fontWeight: 'bold' }}
                         />
                         <Typography variant="h6" sx={{ color: '#2ed573', fontWeight: 'bold' }}>
                           {listing.price} DMT
-                </Typography>
-              </Box>
-                      
+                        </Typography>
+                      </Box>
+
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                           Level {listing.level} • Seller: {listing.seller}
-              </Typography>
+                        </Typography>
                         <Button
                           variant="contained"
                           onClick={() => handlePurchaseAgent(listing.id)}
@@ -1910,9 +1910,9 @@ ${taskResponse}
                           {loading ? <CircularProgress size={20} sx={{ color: 'black' }} /> : 'Purchase'}
                         </Button>
                       </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+                    </CardContent>
+                  </Card>
+                </Grid>
               ))}
             </Grid>
           </CardContent>
@@ -1921,45 +1921,45 @@ ${taskResponse}
 
       {/* Analytics Tab */}
       {activeTab === 'analytics' && agentAnalytics && (
-        <Card sx={{ 
-          background: 'rgba(25, 25, 25, 0.9)', 
+        <Card sx={{
+          background: 'rgba(25, 25, 25, 0.9)',
           border: '2px solid #2ed573',
           borderRadius: 3,
           mb: 4
         }}>
-            <CardContent>
+          <CardContent>
             <Typography variant="h5" sx={{ color: '#2ed573', mb: 3, textAlign: 'center' }}>
               📊 Agent Analytics Dashboard
             </Typography>
-            
+
             <Grid container spacing={3}>
               <Grid item xs={12} md={3}>
                 <Card sx={{ background: 'rgba(46, 213, 115, 0.1)', border: '2px solid #2ed573' }}>
                   <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h4" sx={{ color: '#2ed573', fontWeight: 'bold' }}>
+                    <Typography variant="h4" sx={{ color: '#2ed573', fontWeight: 'bold' }}>
                       {agentAnalytics.totalAgents}
-                </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                       Total Agents
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-              
-        <Grid item xs={12} md={3}>
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} md={3}>
                 <Card sx={{ background: 'rgba(0, 255, 255, 0.1)', border: '2px solid #00ffff' }}>
                   <CardContent sx={{ textAlign: 'center' }}>
                     <Typography variant="h4" sx={{ color: '#00ffff', fontWeight: 'bold' }}>
                       {agentAnalytics.totalXP}
-                </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                       Total XP
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-              
-        <Grid item xs={12} md={3}>
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} md={3}>
                 <Card sx={{ background: 'rgba(255, 193, 7, 0.1)', border: '2px solid #ffc107' }}>
                   <CardContent sx={{ textAlign: 'center' }}>
                     <Typography variant="h4" sx={{ color: '#ffc107', fontWeight: 'bold' }}>
@@ -1971,7 +1971,7 @@ ${taskResponse}
                   </CardContent>
                 </Card>
               </Grid>
-              
+
               <Grid item xs={12} md={3}>
                 <Card sx={{ background: 'rgba(255, 107, 107, 0.1)', border: '2px solid #ff6b6b' }}>
                   <CardContent sx={{ textAlign: 'center' }}>
@@ -1985,7 +1985,7 @@ ${taskResponse}
                 </Card>
               </Grid>
             </Grid>
-            
+
             <Box sx={{ mt: 3, p: 2, background: 'rgba(46, 213, 115, 0.1)', borderRadius: 2 }}>
               <Typography variant="h6" sx={{ color: '#2ed573', mb: 2 }}>
                 📈 Performance Metrics
@@ -2009,21 +2009,21 @@ ${taskResponse}
 
       {/* Orchestrator Tab */}
       {activeTab === 'orchestrator' && (
-          <Card sx={{ 
-            background: 'rgba(25, 25, 25, 0.9)', 
+        <Card sx={{
+          background: 'rgba(25, 25, 25, 0.9)',
           border: '2px solid #9b59b6',
           borderRadius: 3,
           mb: 4
-          }}>
-            <CardContent>
+        }}>
+          <CardContent>
             <Typography variant="h5" sx={{ color: '#9b59b6', mb: 3, textAlign: 'center' }}>
               🎯 Advanced Agent Orchestrator
-                </Typography>
-            
+            </Typography>
+
             <Typography variant="body1" sx={{ color: 'text.secondary', mb: 3, textAlign: 'center' }}>
               Coordinate multiple agents to solve complex tasks using advanced AI orchestration
             </Typography>
-            
+
             <TextField
               fullWidth
               multiline
@@ -2036,7 +2036,7 @@ ${taskResponse}
                 sx: { color: 'white' }
               }}
             />
-            
+
             <Box sx={{ textAlign: 'center', mb: 3 }}>
               <Button
                 variant="contained"
@@ -2059,8 +2059,8 @@ ${taskResponse}
               >
                 {loading ? <CircularProgress size={20} sx={{ color: 'white' }} /> : '🎯 Orchestrate Agents'}
               </Button>
-              </Box>
-            
+            </Box>
+
             {orchestrationResult && (
               <Box sx={{ mt: 3, p: 2, background: 'rgba(155, 89, 182, 0.1)', borderRadius: 2 }}>
                 <Typography variant="body2" sx={{ color: 'white', whiteSpace: 'pre-line' }}>
@@ -2076,8 +2076,8 @@ ${taskResponse}
       {activeTab === 'agents' && (
         <>
           {/* Agent Minting Section */}
-          <Card sx={{ 
-            background: 'rgba(25, 25, 25, 0.9)', 
+          <Card sx={{
+            background: 'rgba(25, 25, 25, 0.9)',
             border: '2px solid #ff6b6b',
             borderRadius: 3,
             mb: 4
@@ -2086,21 +2086,21 @@ ${taskResponse}
               <Typography variant="h4" sx={{ color: '#ff6b6b', mb: 3, textAlign: 'center' }}>
                 🚀 Agent Minting & Management
               </Typography>
-              
+
               <Typography variant="body1" sx={{ color: 'text.secondary', mb: 3, textAlign: 'center' }}>
                 Testing Tip: You need SOL for transaction fees. Get free SOL from the Solana Devnet Faucet for testing.
               </Typography>
-              
+
               {/* Agent Type Selection */}
               <Box sx={{ mb: 4 }}>
                 <Typography variant="h6" sx={{ color: '#00ffff', mb: 2 }}>
                   🎯 Choose Agent Type
                 </Typography>
-                
+
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
-                    <Card 
-                      sx={{ 
+                    <Card
+                      sx={{
                         background: 'rgba(0,255,255,0.2)',
                         border: '2px solid #00ffff',
                         borderRadius: 2,
@@ -2123,14 +2123,14 @@ ${taskResponse}
                         </Typography>
                         <Typography variant="caption" sx={{ color: '#00ffff' }}>
                           Cost: 100 DMT
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-                  
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+
                   <Grid item xs={12} md={6}>
-                    <Card 
-                      sx={{ 
+                    <Card
+                      sx={{
                         background: 'rgba(255,193,7,0.2)',
                         border: '2px solid #ffc107',
                         borderRadius: 2,
@@ -2156,84 +2156,84 @@ ${taskResponse}
                         </Typography>
                       </CardContent>
                     </Card>
-      </Grid>
+                  </Grid>
                 </Grid>
               </Box>
 
               <Box sx={{ textAlign: 'center' }}>
-        <Button
-          variant="contained"
-          size="large"
-          onClick={() => setShowMintDialog(true)}
-          sx={{
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => setShowMintDialog(true)}
+                  sx={{
                     background: 'linear-gradient(45deg, #ff6b6b, #ffc107)',
                     color: 'white',
-            fontWeight: 'bold',
-            px: 4,
+                    fontWeight: 'bold',
+                    px: 4,
                     py: 1.5,
-            '&:hover': {
+                    '&:hover': {
                       background: 'linear-gradient(45deg, #ffc107, #ff6b6b)',
                     }
-          }}
-        >
-          Mint New Agent
-        </Button>
-      </Box>
+                  }}
+                >
+                  Mint New Agent
+                </Button>
+              </Box>
             </CardContent>
           </Card>
 
-      {/* Domain Selection */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h5" sx={{ color: 'white', mb: 3, fontWeight: 'bold' }}>
-          🎯 Choose Your Agent Domain
-        </Typography>
-        <Grid container spacing={2}>
-          {domains.map((domain) => (
-            <Grid item xs={12} sm={6} md={3} key={domain.name}>
-              <Card
-                sx={{
-                  background: 'rgba(25, 25, 25, 0.9)',
-                  border: `2px solid ${domain.color}`,
-                  borderRadius: 3,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: `0 8px 25px ${domain.color}40`,
-                  },
-                }}
-                onClick={() => setSelectedDomain(domain.name)}
-              >
-                <CardContent>
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <Box
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: '50%',
-                        background: domain.color,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mr: 2,
-                      }}
-                    >
-                      {React.cloneElement(domain.icon, { sx: { color: 'white', fontSize: 20 } })}
-                    </Box>
-                    <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-                      {domain.name}
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
+          {/* Domain Selection */}
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h5" sx={{ color: 'white', mb: 3, fontWeight: 'bold' }}>
+              🎯 Choose Your Agent Domain
+            </Typography>
+            <Grid container spacing={2}>
+              {domains.map((domain) => (
+                <Grid item xs={12} sm={6} md={3} key={domain.name}>
+                  <Card
+                    sx={{
+                      background: 'rgba(25, 25, 25, 0.9)',
+                      border: `2px solid ${domain.color}`,
+                      borderRadius: 3,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: `0 8px 25px ${domain.color}40`,
+                      },
+                    }}
+                    onClick={() => setSelectedDomain(domain.name)}
+                  >
+                    <CardContent>
+                      <Box display="flex" alignItems="center" mb={2}>
+                        <Box
+                          sx={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: '50%',
+                            background: domain.color,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            mr: 2,
+                          }}
+                        >
+                          {React.cloneElement(domain.icon, { sx: { color: 'white', fontSize: 20 } })}
+                        </Box>
+                        <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+                          {domain.name}
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
-      </Box>
+          </Box>
 
           {/* Your Minted Agents */}
-          <Card sx={{ 
-            background: 'rgba(25, 25, 25, 0.9)', 
+          <Card sx={{
+            background: 'rgba(25, 25, 25, 0.9)',
             border: '2px solid #2ed573',
             borderRadius: 3,
             mb: 4
@@ -2241,8 +2241,8 @@ ${taskResponse}
             <CardContent>
               <Typography variant="h5" sx={{ color: '#2ed573', mb: 3, textAlign: 'center' }}>
                 🧠 Your AI Agent Ecosystem
-        </Typography>
-              
+              </Typography>
+
               {/* Debug Info */}
               <Box sx={{ mb: 2, p: 2, background: 'rgba(255,255,255,0.1)', borderRadius: 2 }}>
                 <Typography variant="body2" sx={{ color: '#00ffff', mb: 1 }}>
@@ -2277,13 +2277,13 @@ ${taskResponse}
                       console.log('All agents in database:', allAgents);
                       const userAgents = await agentService.getAgents(publicKey?.toBase58());
                       console.log('User agents:', userAgents);
-                      
+
                       // Show agents that don't belong to current user
-                      const otherAgents = allAgents.filter(agent => 
+                      const otherAgents = allAgents.filter(agent =>
                         agent.owner && agent.owner !== publicKey?.toBase58()
                       );
                       console.log('Agents owned by others:', otherAgents);
-                      
+
                       showSuccess(`Found ${allAgents.length} total agents, ${userAgents.length} user agents, ${otherAgents.length} other agents`);
                     }}
                     sx={{ borderColor: '#ffc107', color: '#ffc107' }}
@@ -2298,22 +2298,22 @@ ${taskResponse}
                         showError('Please connect your wallet first');
                         return;
                       }
-                      
+
                       try {
                         const allAgents = await agentService.getAgents();
-                        const otherAgents = allAgents.filter(agent => 
+                        const otherAgents = allAgents.filter(agent =>
                           agent.owner && agent.owner !== publicKey.toBase58()
                         );
-                        
+
                         if (otherAgents.length === 0) {
                           showError('No agents to reassign');
                           return;
                         }
-                        
+
                         // Reassign first 5 agents to current user
                         const agentsToReassign = otherAgents.slice(0, 5);
                         let successCount = 0;
-                        
+
                         for (const agent of agentsToReassign) {
                           if (agent.id) {
                             const result = await agentService.reassignAgentOwnership(agent.id, publicKey.toBase58());
@@ -2322,7 +2322,7 @@ ${taskResponse}
                             }
                           }
                         }
-                        
+
                         showSuccess(`Reassigned ${successCount} agents to your wallet`);
                         await loadAgents(); // Reload agents
                       } catch (error) {
@@ -2366,34 +2366,34 @@ ${taskResponse}
                         console.log('Current agents:', mintedAgents);
                         console.log('Wallet connected:', connected);
                         console.log('Public key:', publicKey?.toBase58());
-                        
+
                         if (mintedAgents.length === 0) {
                           showError('No agents available for testing');
                           return;
                         }
-                        
+
                         const testAgent = mintedAgents[0];
                         console.log('Testing agent:', testAgent);
-                        
+
                         // Test evolution info
                         const evolutionInfo = await agentService.getEvolutionInfo(testAgent.id!);
                         console.log('Evolution info:', evolutionInfo);
-                        
+
                         // Test ownership - only wallet addresses are valid
                         const walletAddress = publicKey?.toBase58();
                         const isOwner = testAgent.owner === walletAddress;
-                        
+
                         console.log('Ownership test:', {
                           agentOwner: testAgent.owner,
                           walletAddress,
                           isOwner
                         });
-                        
+
                         let debugMessage = `Agent: ${testAgent.name} (${testAgent.type})\n`;
                         debugMessage += `Owner: ${testAgent.owner}\n`;
                         debugMessage += `Your Wallet: ${walletAddress}\n`;
                         debugMessage += `Ownership Valid: ${isOwner}\n`;
-                        
+
                         if (evolutionInfo.success) {
                           debugMessage += `Can Evolve: Yes (Level ${evolutionInfo.nextTier?.level || 'unknown'})`;
                           showSuccess(debugMessage);
@@ -2410,7 +2410,7 @@ ${taskResponse}
                   >
                     🔍 Deep Debug
                   </Button>
-                                    <Button
+                  <Button
                     size="small"
                     variant="outlined"
                     onClick={async () => {
@@ -2427,7 +2427,7 @@ ${taskResponse}
                             'LearningAssistant': 'Learning',
                             'EducationAgent': 'Learning'
                           };
-                          
+
                           const correctDomain = domainCorrections[agent.name];
                           if (correctDomain && agent.domain !== correctDomain) {
                             console.log(`Correcting ${agent.name} domain from ${agent.domain} to ${correctDomain}`);
@@ -2456,8 +2456,8 @@ ${taskResponse}
                       if (mintedAgents.length > 0) {
                         const agent = mintedAgents[0];
                         const result = await agentService.communicateWithAgent(
-                          agent.id!, 
-                          'Hello! How can you help me today?', 
+                          agent.id!,
+                          'Hello! How can you help me today?',
                           publicKey?.toBase58() || ''
                         );
                         if (result.success) {
@@ -2497,52 +2497,52 @@ ${taskResponse}
                   </Button>
                 </Box>
               </Box>
-              
+
               <TableContainer component={Paper} sx={{ background: 'rgba(25, 25, 25, 0.5)' }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Agent</TableCell>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Agent</TableCell>
                       <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Type</TableCell>
-                <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Domain</TableCell>
-                <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Personality</TableCell>
-                <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Level</TableCell>
-                <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>XP</TableCell>
-                <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Status</TableCell>
-                <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+                      <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Domain</TableCell>
+                      <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Personality</TableCell>
+                      <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Level</TableCell>
+                      <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>XP</TableCell>
+                      <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Status</TableCell>
+                      <TableCell sx={{ color: '#00ffff', fontWeight: 'bold' }}>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
                     {/* Master Agents Rows */}
                     {mintedAgents.filter(agent => {
                       if (agent.type) return agent.type === 'master';
                       return agent.domain === 'Master' || agent.domain === 'Master Coordinator' || agent.capabilities;
                     }).map((agent) => (
-                      <TableRow key={agent.id} sx={{ 
+                      <TableRow key={agent.id} sx={{
                         '&:hover': { background: 'rgba(255,255,255,0.05)' },
                         background: 'rgba(255,193,7,0.1)'
                       }}>
-                  <TableCell>
+                        <TableCell>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <CrownIcon sx={{ color: '#ffc107', fontSize: 20 }} />
                             <Typography sx={{ color: 'white', fontWeight: 'bold' }}>
-                        {agent.name}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
+                              {agent.name}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
                             label="👑 Master Agent"
-                      size="small"
-                      sx={{
+                            size="small"
+                            sx={{
                               background: '#ffc107',
                               color: 'black',
                               fontWeight: 'bold'
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                          <Chip 
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Chip
                             label={agent.domain}
                             size="small"
                             sx={{
@@ -2551,25 +2551,25 @@ ${taskResponse}
                               fontWeight: 'bold'
                             }}
                           />
-                  </TableCell>
+                        </TableCell>
                         <TableCell sx={{ color: 'text.secondary' }}>{agent.personality}</TableCell>
-                  <TableCell>
+                        <TableCell>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <Typography sx={{ color: '#2ed573', fontWeight: 'bold' }}>
-                      {agent.level}
-                    </Typography>
+                              {agent.level}
+                            </Typography>
                           </Box>
-                  </TableCell>
-                  <TableCell>
+                        </TableCell>
+                        <TableCell>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <Typography sx={{ color: '#ffc107', fontWeight: 'bold' }}>
-                      {agent.xp}
-                    </Typography>
+                              {agent.xp}
+                            </Typography>
                           </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={agent.status}
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={agent.status}
                             size="small"
                             color="success"
                             sx={{ fontWeight: 'bold' }}
@@ -2597,7 +2597,7 @@ ${taskResponse}
                         </TableCell>
                       </TableRow>
                     ))}
-                    
+
                     {/* Sub-Agents Rows */}
                     {mintedAgents.filter(agent => {
                       if (agent.type) return agent.type === 'sub';
@@ -2613,10 +2613,10 @@ ${taskResponse}
                           </Box>
                         </TableCell>
                         <TableCell>
-                          <Chip 
+                          <Chip
                             label="🤖 Sub-Agent"
-                      size="small"
-                      sx={{
+                            size="small"
+                            sx={{
                               background: '#00ffff',
                               color: 'black',
                               fontWeight: 'bold'
@@ -2624,18 +2624,18 @@ ${taskResponse}
                           />
                         </TableCell>
                         <TableCell>
-                          <Chip 
+                          <Chip
                             label={agent.domain}
                             size="small"
                             sx={{
                               background: getDomainColor(agent.domain),
-                        color: 'white',
+                              color: 'white',
                               fontWeight: 'bold'
-                      }}
-                    />
-                  </TableCell>
+                            }}
+                          />
+                        </TableCell>
                         <TableCell sx={{ color: 'text.secondary' }}>{agent.personality}</TableCell>
-                  <TableCell>
+                        <TableCell>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <Typography sx={{ color: '#2ed573', fontWeight: 'bold' }}>
                               {agent.level}
@@ -2650,7 +2650,7 @@ ${taskResponse}
                           </Box>
                         </TableCell>
                         <TableCell>
-                          <Chip 
+                          <Chip
                             label={agent.status}
                             size="small"
                             color={agent.status === 'active' ? 'success' : 'warning'}
@@ -2659,14 +2659,14 @@ ${taskResponse}
                         </TableCell>
                         <TableCell>
                           <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button
-                      size="small"
+                            <Button
+                              size="small"
                               variant="outlined"
                               onClick={() => handleOpenSubAgentChat(agent)}
-                      sx={{ borderColor: '#00ffff', color: '#00ffff' }}
-                    >
+                              sx={{ borderColor: '#00ffff', color: '#00ffff' }}
+                            >
                               Chat
-                    </Button>
+                            </Button>
                             <Button
                               size="small"
                               variant="outlined"
@@ -2721,34 +2721,34 @@ ${taskResponse}
                               Upgrade
                             </Button>
                           </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-              
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
               {/* Summary Stats */}
               <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: 2 }}>
-                <Chip 
+                <Chip
                   label={`👑 Master Agents: ${mintedAgents.filter(agent => {
                     if (agent.type) return agent.type === 'master';
                     return agent.domain === 'Master' || agent.domain === 'Master Coordinator' || agent.capabilities;
                   }).length}`}
                   sx={{ background: '#ffc107', color: 'black', fontWeight: 'bold' }}
                 />
-                <Chip 
+                <Chip
                   label={`🤖 Sub-Agents: ${mintedAgents.filter(agent => {
                     if (agent.type) return agent.type === 'sub';
                     return !(agent.domain === 'Master' || agent.domain === 'Master Coordinator' || agent.capabilities);
                   }).length}`}
                   sx={{ background: '#00ffff', color: 'black', fontWeight: 'bold' }}
                 />
-                <Chip 
+                <Chip
                   label={`📊 Total Agents: ${mintedAgents.length}`}
                   sx={{ background: '#2ed573', color: 'black', fontWeight: 'bold' }}
                 />
-      </Box>
+              </Box>
 
 
             </CardContent>
@@ -2759,106 +2759,106 @@ ${taskResponse}
             if (agent.type) return agent.type === 'master';
             return agent.domain === 'Master' || agent.domain === 'Master Coordinator' || agent.capabilities;
           }).length > 0 && (
-            <Card sx={{ 
-              background: 'rgba(25, 25, 25, 0.9)', 
-              border: '2px solid #ffc107',
-              borderRadius: 3,
-              mb: 4
-            }}>
-              <CardContent>
-                <Typography variant="h5" sx={{ color: '#ffc107', mb: 3, textAlign: 'center' }}>
-                  👑 Master Agent Management
-                </Typography>
-                
-                <Grid container spacing={3}>
-                  {mintedAgents.filter(agent => {
-                    if (agent.type) return agent.type === 'master';
-                    return agent.domain === 'Master' || agent.domain === 'Master Coordinator' || agent.capabilities;
-                  }).map((masterAgent, index) => (
-                    <Grid item xs={12} md={6} key={masterAgent.id}>
-                      <Card sx={{ 
-                        background: 'rgba(255,193,7,0.1)', 
-                        border: '2px solid #ffc107',
-                        borderRadius: 2,
-                        mb: 2
-                      }}>
-                        <CardContent>
-                          <Typography variant="h6" sx={{ color: '#00ffff', mb: 2 }}>
-                            🤖 {masterAgent.name} (Level {masterAgent.level})
-                          </Typography>
-                          <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                            XP: {masterAgent.xp} / 100 XP to next level
-                          </Typography>
-                          
-                          <Typography variant="h6" sx={{ color: '#2ed573', mb: 1 }}>
-                            Capabilities:
-                          </Typography>
-                          <List dense>
-                            {masterAgent.capabilities?.map((capability: string, capIndex: number) => (
-                              <ListItem key={capIndex} sx={{ py: 0 }}>
-                                <ListItemIcon>
-                                  <CheckCircleIcon sx={{ color: '#2ed573', fontSize: 20 }} />
-                                </ListItemIcon>
-                                <ListItemText 
-                                  primary={capability} 
-                                  sx={{ color: 'text.secondary' }}
-                                />
-                              </ListItem>
-                            ))}
-                          </List>
-                          
-                          <Typography variant="body2" sx={{ color: '#ffc107', mt: 2 }}>
-                            Domain: {masterAgent.domain}
-                          </Typography>
-                          
-                          <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
-                            <Button
-                              size="small"
-                              variant="contained"
-                              onClick={() => handleShowEvolutionInfo(masterAgent)}
-                              sx={{
-                                background: 'linear-gradient(45deg, #ffc107, #ff9800)',
-                                color: 'black',
-                                fontWeight: 'bold',
-                                flex: 1
-                              }}
-                            >
-                              🚀 Upgrade {masterAgent.name}
-                            </Button>
-                            
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              onClick={() => setShowMasterAgentDialog(true)}
-                              sx={{
-                                borderColor: '#00ffff',
-                                color: '#00ffff',
-                                flex: 1
-                              }}
-                            >
-                              🤖 Coordinate
-                            </Button>
-                          </Box>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              </CardContent>
-            </Card>
-          )}
+              <Card sx={{
+                background: 'rgba(25, 25, 25, 0.9)',
+                border: '2px solid #ffc107',
+                borderRadius: 3,
+                mb: 4
+              }}>
+                <CardContent>
+                  <Typography variant="h5" sx={{ color: '#ffc107', mb: 3, textAlign: 'center' }}>
+                    👑 Master Agent Management
+                  </Typography>
+
+                  <Grid container spacing={3}>
+                    {mintedAgents.filter(agent => {
+                      if (agent.type) return agent.type === 'master';
+                      return agent.domain === 'Master' || agent.domain === 'Master Coordinator' || agent.capabilities;
+                    }).map((masterAgent, index) => (
+                      <Grid item xs={12} md={6} key={masterAgent.id}>
+                        <Card sx={{
+                          background: 'rgba(255,193,7,0.1)',
+                          border: '2px solid #ffc107',
+                          borderRadius: 2,
+                          mb: 2
+                        }}>
+                          <CardContent>
+                            <Typography variant="h6" sx={{ color: '#00ffff', mb: 2 }}>
+                              🤖 {masterAgent.name} (Level {masterAgent.level})
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+                              XP: {masterAgent.xp} / 100 XP to next level
+                            </Typography>
+
+                            <Typography variant="h6" sx={{ color: '#2ed573', mb: 1 }}>
+                              Capabilities:
+                            </Typography>
+                            <List dense>
+                              {masterAgent.capabilities?.map((capability: string, capIndex: number) => (
+                                <ListItem key={capIndex} sx={{ py: 0 }}>
+                                  <ListItemIcon>
+                                    <CheckCircleIcon sx={{ color: '#2ed573', fontSize: 20 }} />
+                                  </ListItemIcon>
+                                  <ListItemText
+                                    primary={capability}
+                                    sx={{ color: 'text.secondary' }}
+                                  />
+                                </ListItem>
+                              ))}
+                            </List>
+
+                            <Typography variant="body2" sx={{ color: '#ffc107', mt: 2 }}>
+                              Domain: {masterAgent.domain}
+                            </Typography>
+
+                            <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
+                              <Button
+                                size="small"
+                                variant="contained"
+                                onClick={() => handleShowEvolutionInfo(masterAgent)}
+                                sx={{
+                                  background: 'linear-gradient(45deg, #ffc107, #ff9800)',
+                                  color: 'black',
+                                  fontWeight: 'bold',
+                                  flex: 1
+                                }}
+                              >
+                                🚀 Upgrade {masterAgent.name}
+                              </Button>
+
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={() => setShowMasterAgentDialog(true)}
+                                sx={{
+                                  borderColor: '#00ffff',
+                                  color: '#00ffff',
+                                  flex: 1
+                                }}
+                              >
+                                🤖 Coordinate
+                              </Button>
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </CardContent>
+              </Card>
+            )}
         </>
       )}
 
       {/* Dialogs */}
       {/* Master Agent Coordination Dialog */}
-      <Dialog 
-        open={showMasterAgentDialog} 
+      <Dialog
+        open={showMasterAgentDialog}
         onClose={() => setShowMasterAgentDialog(false)}
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle sx={{ 
+        <DialogTitle sx={{
           background: 'linear-gradient(45deg, #00ffff, #2ed573)',
           color: 'black',
           textAlign: 'center'
@@ -2900,7 +2900,7 @@ ${taskResponse}
           >
             {loading ? <CircularProgress size={20} sx={{ color: 'black' }} /> : 'Coordinate Agents'}
           </Button>
-          
+
           {coordinationResponse && (
             <Box sx={{ mt: 3, p: 2, background: 'rgba(0,255,255,0.1)', borderRadius: 2 }}>
               <Typography variant="body2" sx={{ color: 'white', whiteSpace: 'pre-line' }}>
@@ -2918,7 +2918,7 @@ ${taskResponse}
 
       {/* Minting Dialog */}
       <Dialog open={showMintDialog} onClose={() => setShowMintDialog(false)} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ 
+        <DialogTitle sx={{
           background: 'linear-gradient(45deg, #ff6b6b, #ffc107)',
           color: 'white',
           textAlign: 'center'
@@ -2985,8 +2985,8 @@ ${taskResponse}
                 label="Description"
                 value={agentDescription}
                 onChange={(e) => setAgentDescription(e.target.value)}
-                placeholder={selectedAgentType === 'master' ? 
-                  "Your central coordinator agent that manages all sub-agents" : 
+                placeholder={selectedAgentType === 'master' ?
+                  "Your central coordinator agent that manages all sub-agents" :
                   "Specialized agent for your chosen domain"
                 }
                 sx={{ mb: 2 }}
@@ -3001,13 +3001,13 @@ ${taskResponse}
 
             {/* Cost Display */}
             <Grid item xs={12}>
-              <Card sx={{ 
+              <Card sx={{
                 background: selectedAgentType === 'master' ? 'rgba(0,255,255,0.1)' : 'rgba(255,193,7,0.1)',
                 border: selectedAgentType === 'master' ? '2px solid #00ffff' : '2px solid #ffc107',
                 borderRadius: 2
               }}>
                 <CardContent>
-                  <Typography variant="h6" sx={{ 
+                  <Typography variant="h6" sx={{
                     color: selectedAgentType === 'master' ? '#00ffff' : '#ffc107',
                     textAlign: 'center',
                     fontWeight: 'bold'
@@ -3015,8 +3015,8 @@ ${taskResponse}
                     💰 Mint Cost: {calculateMintCost()} DMT
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center', mt: 1 }}>
-                    {selectedAgentType === 'master' ? 
-                      'Master Agent - Your central coordinator' : 
+                    {selectedAgentType === 'master' ?
+                      'Master Agent - Your central coordinator' :
                       'Sub-Agent - Specialized domain agent'
                     }
                   </Typography>
@@ -3057,8 +3057,8 @@ ${taskResponse}
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle sx={{ 
-          color: '#00ffff', 
+        <DialogTitle sx={{
+          color: '#00ffff',
           background: 'rgba(0, 0, 0, 0.9)',
           display: 'flex',
           justifyContent: 'space-between',
@@ -3075,7 +3075,7 @@ ${taskResponse}
               </Box>
             )}
           </Box>
-          
+
           {/* Voice Controls */}
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button
@@ -3092,7 +3092,7 @@ ${taskResponse}
             >
               {voiceEnabled ? '🔊' : '🔇'}
             </Button>
-            
+
             {isSpeaking && (
               <Button
                 size="small"
@@ -3110,7 +3110,7 @@ ${taskResponse}
             )}
           </Box>
         </DialogTitle>
-        
+
         <DialogContent sx={{ background: 'rgba(0, 0, 0, 0.9)' }}>
           <Box sx={{ height: 400, overflowY: 'auto', p: 2, background: 'rgba(255, 255, 255, 0.1)', borderRadius: 1 }}>
             {subAgentChatHistory.map((msg, index) => (
@@ -3143,7 +3143,7 @@ ${taskResponse}
               </Box>
             )}
           </Box>
-          
+
           {/* Message Input with Voice */}
           <Box sx={{ mt: 2, display: 'flex', gap: 1, alignItems: 'flex-end' }}>
             <TextField
@@ -3153,13 +3153,13 @@ ${taskResponse}
               value={subAgentMessage}
               onChange={(e) => setSubAgentMessage(e.target.value)}
               placeholder={`Message ${selectedSubAgent?.name}... ${voiceEnabled ? '(or speak your message)' : ''}`}
-              sx={{ 
+              sx={{
                 '& .MuiOutlinedInput-root': { color: 'white' },
                 '& .MuiOutlinedInput-notchedOutline': { borderColor: isListening ? '#00ffff' : 'rgba(255,255,255,0.3)' }
               }}
               disabled={isListening}
             />
-            
+
             {/* Voice Input Button */}
             <Button
               variant={isListening ? "contained" : "outlined"}
@@ -3181,7 +3181,7 @@ ${taskResponse}
               {isListening ? '🎤' : '🎤'}
             </Button>
           </Box>
-          
+
           {/* Send Button */}
           <Button
             fullWidth
@@ -3204,7 +3204,7 @@ ${taskResponse}
           >
             {loading ? <CircularProgress size={20} sx={{ color: 'black' }} /> : 'Send Message'}
           </Button>
-          
+
           {/* Voice Status */}
           {voiceEnabled && (
             <Box sx={{ mt: 2, p: 1, background: 'rgba(0, 255, 255, 0.1)', borderRadius: 1 }}>
@@ -3214,7 +3214,7 @@ ${taskResponse}
             </Box>
           )}
         </DialogContent>
-        
+
         <DialogActions sx={{ background: 'rgba(0, 0, 0, 0.9)' }}>
           <Button
             onClick={() => {
@@ -3229,8 +3229,8 @@ ${taskResponse}
       </Dialog>
 
       {/* Data Storage & Monetization Info */}
-      <Card sx={{ 
-        background: 'rgba(25, 25, 25, 0.9)', 
+      <Card sx={{
+        background: 'rgba(25, 25, 25, 0.9)',
         border: '2px solid #00ffff',
         borderRadius: 2,
         mb: 3
@@ -3239,7 +3239,7 @@ ${taskResponse}
           <Typography variant="h6" sx={{ color: '#00ffff', mb: 2, textAlign: 'center' }}>
             💾 Data Storage & 💰 Monetization System
           </Typography>
-          
+
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <Typography variant="subtitle1" sx={{ color: '#2ed573', mb: 1 }}>
@@ -3250,8 +3250,8 @@ ${taskResponse}
                   <ListItemIcon>
                     <CheckCircleIcon sx={{ color: '#2ed573' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Firebase Firestore Database" 
+                  <ListItemText
+                    primary="Firebase Firestore Database"
                     secondary="Real-time, scalable cloud storage"
                   />
                 </ListItem>
@@ -3259,8 +3259,8 @@ ${taskResponse}
                   <ListItemIcon>
                     <CheckCircleIcon sx={{ color: '#2ed573' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Automatic Backups" 
+                  <ListItemText
+                    primary="Automatic Backups"
                     secondary="Daily backups to prevent data loss"
                   />
                 </ListItem>
@@ -3268,8 +3268,8 @@ ${taskResponse}
                   <ListItemIcon>
                     <CheckCircleIcon sx={{ color: '#2ed573' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Agent Memory" 
+                  <ListItemText
+                    primary="Agent Memory"
                     secondary="Persistent conversation history"
                   />
                 </ListItem>
@@ -3277,14 +3277,14 @@ ${taskResponse}
                   <ListItemIcon>
                     <CheckCircleIcon sx={{ color: '#2ed573' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Research Database" 
+                  <ListItemText
+                    primary="Research Database"
                     secondary="Stored research results and sources"
                   />
                 </ListItem>
               </List>
             </Grid>
-            
+
             <Grid item xs={12} md={6}>
               <Typography variant="subtitle1" sx={{ color: '#ffc107', mb: 1 }}>
                 💰 Monetization Features:
@@ -3294,8 +3294,8 @@ ${taskResponse}
                   <ListItemIcon>
                     <StarIcon sx={{ color: '#ffc107' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Agent Upgrades" 
+                  <ListItemText
+                    primary="Agent Upgrades"
                     secondary="Exponential cost scaling by level"
                   />
                 </ListItem>
@@ -3303,8 +3303,8 @@ ${taskResponse}
                   <ListItemIcon>
                     <StarIcon sx={{ color: '#ffc107' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="RAG Enhancement" 
+                  <ListItemText
+                    primary="RAG Enhancement"
                     secondary="Advanced research capabilities"
                   />
                 </ListItem>
@@ -3312,8 +3312,8 @@ ${taskResponse}
                   <ListItemIcon>
                     <StarIcon sx={{ color: '#ffc107' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Voice Features" 
+                  <ListItemText
+                    primary="Voice Features"
                     secondary="Premium voice interaction"
                   />
                 </ListItem>
@@ -3321,15 +3321,15 @@ ${taskResponse}
                   <ListItemIcon>
                     <StarIcon sx={{ color: '#ffc107' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Agent Trading" 
+                  <ListItemText
+                    primary="Agent Trading"
                     secondary="Marketplace for agent exchange"
                   />
                 </ListItem>
               </List>
             </Grid>
           </Grid>
-          
+
           <Box sx={{ mt: 2, p: 2, background: 'rgba(255,255,255,0.1)', borderRadius: 1 }}>
             <Typography variant="body2" sx={{ color: '#00ffff', mb: 1 }}>
               🎤 Voice Commands Available:
@@ -3342,8 +3342,8 @@ ${taskResponse}
       </Card>
 
       {/* Task Delegation & Agent Management */}
-      <Card sx={{ 
-        background: 'rgba(25, 25, 25, 0.9)', 
+      <Card sx={{
+        background: 'rgba(25, 25, 25, 0.9)',
         border: '2px solid #00ffff',
         borderRadius: 2,
         mb: 3
@@ -3352,7 +3352,7 @@ ${taskResponse}
           <Typography variant="h6" sx={{ color: '#00ffff', mb: 2, textAlign: 'center' }}>
             🎯 Task Delegation & Agent Management
           </Typography>
-          
+
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <Typography variant="subtitle1" sx={{ color: '#ffc107', mb: 2 }}>
@@ -3396,18 +3396,18 @@ ${taskResponse}
               </Typography>
               <Box sx={{ maxHeight: 200, overflow: 'auto' }}>
                 {mintedAgents.filter(agent => agent.type === 'master').map((agent) => (
-                  <Box key={agent.id} sx={{ 
-                    p: 1, 
-                    mb: 1, 
-                    background: 'rgba(255,255,255,0.1)', 
+                  <Box key={agent.id} sx={{
+                    p: 1,
+                    mb: 1,
+                    background: 'rgba(255,255,255,0.1)',
                     borderRadius: 1,
                     cursor: 'pointer',
                     '&:hover': { background: 'rgba(255,255,255,0.2)' }
                   }}
-                  onClick={() => {
-                    setSelectedMasterAgent(agent);
-                    setShowDelegationDialog(true);
-                  }}
+                    onClick={() => {
+                      setSelectedMasterAgent(agent);
+                      setShowDelegationDialog(true);
+                    }}
                   >
                     <Typography variant="body2" sx={{ color: '#ffc107', fontWeight: 'bold' }}>
                       {agent.name} (Level {agent.level})
@@ -3429,8 +3429,8 @@ ${taskResponse}
       </Card>
 
       {/* How Agents Work Together */}
-      <Card sx={{ 
-        background: 'rgba(25, 25, 25, 0.9)', 
+      <Card sx={{
+        background: 'rgba(25, 25, 25, 0.9)',
         border: '2px solid #2ed573',
         borderRadius: 2,
         mb: 3
@@ -3439,7 +3439,7 @@ ${taskResponse}
           <Typography variant="h6" sx={{ color: '#2ed573', mb: 2, textAlign: 'center' }}>
             🤝 How Agents Work Together
           </Typography>
-          
+
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <Typography variant="subtitle1" sx={{ color: '#00ffff', mb: 1 }}>
@@ -3450,8 +3450,8 @@ ${taskResponse}
                   <ListItemIcon>
                     <CheckCircleIcon sx={{ color: '#2ed573' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Task Analysis" 
+                  <ListItemText
+                    primary="Task Analysis"
                     secondary="AI analyzes your request and identifies the best agents"
                   />
                 </ListItem>
@@ -3459,8 +3459,8 @@ ${taskResponse}
                   <ListItemIcon>
                     <CheckCircleIcon sx={{ color: '#2ed573' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Agent Selection" 
+                  <ListItemText
+                    primary="Agent Selection"
                     secondary="Selects highest-level agents for the task domain"
                   />
                 </ListItem>
@@ -3468,14 +3468,14 @@ ${taskResponse}
                   <ListItemIcon>
                     <CheckCircleIcon sx={{ color: '#2ed573' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Team Assembly" 
+                  <ListItemText
+                    primary="Team Assembly"
                     secondary="Creates optimal agent combinations for complex tasks"
                   />
                 </ListItem>
               </List>
             </Grid>
-            
+
             <Grid item xs={12} md={6}>
               <Typography variant="subtitle1" sx={{ color: '#ffc107', mb: 1 }}>
                 🧠 Agent Communication:
@@ -3485,8 +3485,8 @@ ${taskResponse}
                   <ListItemIcon>
                     <StarIcon sx={{ color: '#ffc107' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Contextual Responses" 
+                  <ListItemText
+                    primary="Contextual Responses"
                     secondary="Short, relevant responses based on your message"
                   />
                 </ListItem>
@@ -3494,8 +3494,8 @@ ${taskResponse}
                   <ListItemIcon>
                     <StarIcon sx={{ color: '#ffc107' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Voice Interaction" 
+                  <ListItemText
+                    primary="Voice Interaction"
                     secondary="Agents can speak and listen to voice commands"
                   />
                 </ListItem>
@@ -3503,15 +3503,15 @@ ${taskResponse}
                   <ListItemIcon>
                     <StarIcon sx={{ color: '#ffc107' }} />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Memory & Learning" 
+                  <ListItemText
+                    primary="Memory & Learning"
                     secondary="Agents remember conversations and learn from interactions"
                   />
                 </ListItem>
               </List>
             </Grid>
           </Grid>
-          
+
           <Box sx={{ mt: 2, p: 2, background: 'rgba(255,255,255,0.1)', borderRadius: 1 }}>
             <Typography variant="body2" sx={{ color: '#00ffff', mb: 1 }}>
               🚀 Evolution System:
@@ -3523,141 +3523,141 @@ ${taskResponse}
         </CardContent>
       </Card>
 
-             {/* Agent Details Dialog */}
-       <Dialog
-         open={showAgentDetails}
-         onClose={() => setShowAgentDetails(false)}
-         maxWidth="lg"
-         fullWidth
-       >
-         <DialogTitle sx={{ 
-           background: 'linear-gradient(45deg, #00b894, #00cec9)',
-           color: 'white',
-           textAlign: 'center'
-         }}>
-           Individual Agent Details: {selectedAgentDetails?.name}
-         </DialogTitle>
-         <DialogContent sx={{ background: 'rgba(25, 25, 25, 0.9)', pt: 3 }}>
-           {selectedAgentDetails && (
-             <Grid container spacing={3}>
-               <Grid item xs={12} md={6}>
-                 <Typography variant="h6" sx={{ color: '#00b894', mb: 2 }}>
-                   🧠 LLM Configuration
-                 </Typography>
-                 <Box sx={{ p: 2, background: 'rgba(255,255,255,0.1)', borderRadius: 1, mb: 2 }}>
-                   <Typography variant="body2" sx={{ color: '#00cec9', mb: 1 }}>
-                     Model: {selectedAgentDetails.llmConfig?.model || 'GPT-3.5'}
-                   </Typography>
-                   <Typography variant="body2" sx={{ color: '#74b9ff', mb: 1 }}>
-                     Version: {selectedAgentDetails.llmConfig?.version || 'latest'}
-                   </Typography>
-                   <Typography variant="body2" sx={{ color: '#a29bfe', mb: 1 }}>
-                     Temperature: {selectedAgentDetails.llmConfig?.temperature || 0.7}
-                   </Typography>
-                   <Typography variant="body2" sx={{ color: '#fd79a8', mb: 1 }}>
-                     Max Tokens: {selectedAgentDetails.llmConfig?.maxTokens || 4096}
-                   </Typography>
-                   <Typography variant="body2" sx={{ color: '#fdcb6e' }}>
-                     Context Window: {selectedAgentDetails.llmConfig?.contextWindow || 4096}
-                   </Typography>
-                 </Box>
-               </Grid>
-               
-               <Grid item xs={12} md={6}>
-                 <Typography variant="h6" sx={{ color: '#00b894', mb: 2 }}>
-                   📚 RAG Configuration
-                 </Typography>
-                 <Box sx={{ p: 2, background: 'rgba(255,255,255,0.1)', borderRadius: 1, mb: 2 }}>
-                   <Typography variant="body2" sx={{ color: '#00cec9', mb: 1 }}>
-                     Data Source: {selectedAgentDetails.ragConfig?.dataSource || 'Default'}
-                   </Typography>
-                   <Typography variant="body2" sx={{ color: '#74b9ff', mb: 1 }}>
-                     Vector DB: {selectedAgentDetails.ragConfig?.vectorDB || 'Default'}
-                   </Typography>
-                   <Typography variant="body2" sx={{ color: '#a29bfe', mb: 1 }}>
-                     IPFS Hash: {selectedAgentDetails.ragConfig?.ipfsHash || 'None'}
-                   </Typography>
-                   <Typography variant="body2" sx={{ color: '#fd79a8', mb: 1 }}>
-                     Knowledge Base: {selectedAgentDetails.ragConfig?.knowledgeBase?.length || 0} topics
-                   </Typography>
-                   <Typography variant="body2" sx={{ color: '#fdcb6e' }}>
-                     Last Updated: {selectedAgentDetails.ragConfig?.lastUpdated || 'Never'}
-                   </Typography>
-                 </Box>
-               </Grid>
-
-            <Grid item xs={12}>
-                 <Typography variant="h6" sx={{ color: '#00b894', mb: 2 }}>
-                   📊 Individual Statistics
+      {/* Agent Details Dialog */}
+      <Dialog
+        open={showAgentDetails}
+        onClose={() => setShowAgentDetails(false)}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DialogTitle sx={{
+          background: 'linear-gradient(45deg, #00b894, #00cec9)',
+          color: 'white',
+          textAlign: 'center'
+        }}>
+          Individual Agent Details: {selectedAgentDetails?.name}
+        </DialogTitle>
+        <DialogContent sx={{ background: 'rgba(25, 25, 25, 0.9)', pt: 3 }}>
+          {selectedAgentDetails && (
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Typography variant="h6" sx={{ color: '#00b894', mb: 2 }}>
+                  🧠 LLM Configuration
                 </Typography>
-                 <Box sx={{ p: 2, background: 'rgba(255,255,255,0.1)', borderRadius: 1, mb: 2 }}>
-                   <Grid container spacing={2}>
-                     <Grid item xs={6} md={3}>
-                       <Typography variant="body2" sx={{ color: '#00cec9' }}>
-                         Total Upgrades: {selectedAgentDetails.individualStats?.totalUpgrades || 0}
-                       </Typography>
+                <Box sx={{ p: 2, background: 'rgba(255,255,255,0.1)', borderRadius: 1, mb: 2 }}>
+                  <Typography variant="body2" sx={{ color: '#00cec9', mb: 1 }}>
+                    Model: {selectedAgentDetails.llmConfig?.model || 'GPT-3.5'}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#74b9ff', mb: 1 }}>
+                    Version: {selectedAgentDetails.llmConfig?.version || 'latest'}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#a29bfe', mb: 1 }}>
+                    Temperature: {selectedAgentDetails.llmConfig?.temperature || 0.7}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#fd79a8', mb: 1 }}>
+                    Max Tokens: {selectedAgentDetails.llmConfig?.maxTokens || 4096}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#fdcb6e' }}>
+                    Context Window: {selectedAgentDetails.llmConfig?.contextWindow || 4096}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography variant="h6" sx={{ color: '#00b894', mb: 2 }}>
+                  📚 RAG Configuration
+                </Typography>
+                <Box sx={{ p: 2, background: 'rgba(255,255,255,0.1)', borderRadius: 1, mb: 2 }}>
+                  <Typography variant="body2" sx={{ color: '#00cec9', mb: 1 }}>
+                    Data Source: {selectedAgentDetails.ragConfig?.dataSource || 'Default'}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#74b9ff', mb: 1 }}>
+                    Vector DB: {selectedAgentDetails.ragConfig?.vectorDB || 'Default'}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#a29bfe', mb: 1 }}>
+                    IPFS Hash: {selectedAgentDetails.ragConfig?.ipfsHash || 'None'}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#fd79a8', mb: 1 }}>
+                    Knowledge Base: {selectedAgentDetails.ragConfig?.knowledgeBase?.length || 0} topics
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#fdcb6e' }}>
+                    Last Updated: {selectedAgentDetails.ragConfig?.lastUpdated || 'Never'}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Typography variant="h6" sx={{ color: '#00b894', mb: 2 }}>
+                  📊 Individual Statistics
+                </Typography>
+                <Box sx={{ p: 2, background: 'rgba(255,255,255,0.1)', borderRadius: 1, mb: 2 }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6} md={3}>
+                      <Typography variant="body2" sx={{ color: '#00cec9' }}>
+                        Total Upgrades: {selectedAgentDetails.individualStats?.totalUpgrades || 0}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                      <Typography variant="body2" sx={{ color: '#74b9ff' }}>
+                        DMT Spent: {selectedAgentDetails.individualStats?.totalDmtSpent || 0}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                      <Typography variant="body2" sx={{ color: '#a29bfe' }}>
+                        Conversations: {selectedAgentDetails.individualStats?.uniqueConversations || 0}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                      <Typography variant="body2" sx={{ color: '#fd79a8' }}>
+                        Expertise: {selectedAgentDetails.individualStats?.domainExpertise || 0}%
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Typography variant="h6" sx={{ color: '#00b894', mb: 2 }}>
+                  🚀 Evolution History
+                </Typography>
+                <Box sx={{ maxHeight: 200, overflow: 'auto' }}>
+                  {selectedAgentDetails.evolutionHistory?.map((evolution, index) => (
+                    <Box key={index} sx={{ p: 2, background: 'rgba(255,255,255,0.05)', borderRadius: 1, mb: 1 }}>
+                      <Typography variant="body2" sx={{ color: '#00cec9', mb: 1 }}>
+                        {evolution.timestamp} - Level {evolution.previousLevel} → {evolution.newLevel}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#74b9ff', mb: 1 }}>
+                        LLM: {evolution.llmUpgrade} | DMT: {evolution.dmtSpent}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#a29bfe', fontSize: '0.8rem' }}>
+                        {evolution.reason}
+                      </Typography>
+                    </Box>
+                  )) || (
+                      <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
+                        No evolution history yet
+                      </Typography>
+                    )}
+                </Box>
+              </Grid>
             </Grid>
-                     <Grid item xs={6} md={3}>
-                       <Typography variant="body2" sx={{ color: '#74b9ff' }}>
-                         DMT Spent: {selectedAgentDetails.individualStats?.totalDmtSpent || 0}
-                       </Typography>
-          </Grid>
-                     <Grid item xs={6} md={3}>
-                       <Typography variant="body2" sx={{ color: '#a29bfe' }}>
-                         Conversations: {selectedAgentDetails.individualStats?.uniqueConversations || 0}
-                       </Typography>
-                     </Grid>
-                     <Grid item xs={6} md={3}>
-                       <Typography variant="body2" sx={{ color: '#fd79a8' }}>
-                         Expertise: {selectedAgentDetails.individualStats?.domainExpertise || 0}%
-                       </Typography>
-                     </Grid>
-                   </Grid>
-                 </Box>
-               </Grid>
-
-               <Grid item xs={12}>
-                 <Typography variant="h6" sx={{ color: '#00b894', mb: 2 }}>
-                   🚀 Evolution History
-                 </Typography>
-                 <Box sx={{ maxHeight: 200, overflow: 'auto' }}>
-                   {selectedAgentDetails.evolutionHistory?.map((evolution, index) => (
-                     <Box key={index} sx={{ p: 2, background: 'rgba(255,255,255,0.05)', borderRadius: 1, mb: 1 }}>
-                       <Typography variant="body2" sx={{ color: '#00cec9', mb: 1 }}>
-                         {evolution.timestamp} - Level {evolution.previousLevel} → {evolution.newLevel}
-                       </Typography>
-                       <Typography variant="body2" sx={{ color: '#74b9ff', mb: 1 }}>
-                         LLM: {evolution.llmUpgrade} | DMT: {evolution.dmtSpent}
-                       </Typography>
-                       <Typography variant="body2" sx={{ color: '#a29bfe', fontSize: '0.8rem' }}>
-                         {evolution.reason}
-                       </Typography>
-                     </Box>
-                   )) || (
-                     <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
-                       No evolution history yet
-                     </Typography>
-                   )}
-                 </Box>
-               </Grid>
-             </Grid>
-           )}
+          )}
         </DialogContent>
-         <DialogActions sx={{ background: 'rgba(25, 25, 25, 0.9)', p: 2 }}>
-           <Button onClick={() => setShowAgentDetails(false)} sx={{ color: 'text.secondary' }}>
-             Close
-           </Button>
-         </DialogActions>
-       </Dialog>
+        <DialogActions sx={{ background: 'rgba(25, 25, 25, 0.9)', p: 2 }}>
+          <Button onClick={() => setShowAgentDetails(false)} sx={{ color: 'text.secondary' }}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-       {/* Evolution Dialog */}
-       <Dialog
-         open={showEvolutionDialog}
-         onClose={() => setShowEvolutionDialog(false)}
-         maxWidth="md"
-         fullWidth
-       >
-        <DialogTitle sx={{ 
+      {/* Evolution Dialog */}
+      <Dialog
+        open={showEvolutionDialog}
+        onClose={() => setShowEvolutionDialog(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle sx={{
           background: 'linear-gradient(45deg, #ff6b6b, #ffc107)',
           color: 'white',
           textAlign: 'center'
@@ -3671,13 +3671,13 @@ ${taskResponse}
                 <Typography variant="h6" sx={{ color: '#ffc107', mb: 2 }}>
                   Current Status: {evolutionInfo.currentTier?.llmUpgrade}
                 </Typography>
-                
+
                 {evolutionInfo.nextTier && (
                   <>
                     <Typography variant="h6" sx={{ color: '#00ffff', mb: 2 }}>
                       Next Upgrade: {evolutionInfo.nextTier.llmUpgrade}
                     </Typography>
-                    
+
                     <Box sx={{ mb: 2, p: 2, background: 'rgba(255,255,255,0.1)', borderRadius: 1 }}>
                       <Typography variant="body2" sx={{ color: '#ffc107', mb: 1 }}>
                         💰 DMT Cost: {evolutionInfo.nextTier.dmtRequired} DMT
@@ -3697,14 +3697,14 @@ ${taskResponse}
                     </Box>
                   </>
                 )}
-                
+
                 {!evolutionInfo.nextTier && (
                   <Typography variant="body2" sx={{ color: '#ff6b6b' }}>
                     This agent has reached maximum evolution level!
                   </Typography>
                 )}
               </Grid>
-              
+
               {evolutionInfo.nextTier && (
                 <Grid item xs={12}>
                   <TextField
@@ -3734,7 +3734,7 @@ ${taskResponse}
           <Button onClick={() => setShowEvolutionDialog(false)} sx={{ color: 'text.secondary' }}>
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={handleEvolveWithDMT}
             disabled={loading || !dmtAmount}
             sx={{
@@ -3762,7 +3762,7 @@ ${taskResponse}
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle sx={{ 
+        <DialogTitle sx={{
           background: 'linear-gradient(45deg, #ff6b6b, #ffc107)',
           color: 'white',
           textAlign: 'center'
@@ -3804,13 +3804,13 @@ ${taskResponse}
           >
             {loading ? <CircularProgress size={20} sx={{ color: 'black' }} /> : 'Delegate Task'}
           </Button>
-          
+
           {delegationResult && (
             <Box sx={{ mt: 3, p: 2, background: 'rgba(0,255,255,0.1)', borderRadius: 2 }}>
               <Typography variant="body2" sx={{ color: 'white', whiteSpace: 'pre-line' }}>
                 {delegationResult}
               </Typography>
-    </Box>
+            </Box>
           )}
         </DialogContent>
         <DialogActions sx={{ background: 'rgba(25, 25, 25, 0.9)' }}>
