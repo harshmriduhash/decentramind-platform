@@ -102,7 +102,7 @@ export default function MintAgentPage() {
               Create a completely custom AI agent with your own specifications
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h3 className="text-xl font-semibold mb-4 text-white">Agent Configuration</h3>
@@ -140,7 +140,7 @@ export default function MintAgentPage() {
                 </div>
               </div>
             </div>
-            
+
             <div>
               <h3 className="text-xl font-semibold mb-4 text-white">Pricing</h3>
               <div className="bg-slate-700/30 rounded-lg p-6">
@@ -169,7 +169,7 @@ export default function MintAgentPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="text-center mt-8">
             <button
               onClick={handleMintAgent}
