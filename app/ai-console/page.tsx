@@ -24,18 +24,18 @@ const AIConsolePage = () => {
   const getAgentByTab = (tabId: string) => {
     const agentMap: { [key: string]: string } = {
       'finance': 'finance-agent',
-      'wellness': 'wellness-agent', 
+      'wellness': 'wellness-agent',
       'alpha': 'alpha-agent',
       'custom': 'custom-agent'
     };
-    
+
     const agentId = agentMap[tabId];
     if (!agentId) {
       // Fallback: try to find agent by type
       const fallbackAgent = careAgents.find(agent => agent.type === tabId);
       return fallbackAgent?.id || 'finance-agent';
     }
-    
+
     return agentId;
   };
 
@@ -60,7 +60,7 @@ const AIConsolePage = () => {
             </div>
             <AgentXPBar agentId="finance-agent" />
             <N8nAgentTrigger agentId={selectedAgent} agentName={agent?.name || 'Autonomous CFO'} />
-            
+
             {/* Sub-Agents */}
             {agent?.subAgents && agent.subAgents.length > 0 && (
               <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/30">
@@ -76,7 +76,7 @@ const AIConsolePage = () => {
             )}
           </div>
         );
-      
+
       case 'wellness':
         return (
           <div className="space-y-6">
@@ -93,7 +93,7 @@ const AIConsolePage = () => {
             </div>
             <AgentXPBar agentId="wellness-agent" />
             <N8nAgentTrigger agentId={selectedAgent} agentName={agent?.name || 'Care Orchestrator'} />
-            
+
             {/* Sub-Agents */}
             {agent?.subAgents && agent.subAgents.length > 0 && (
               <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/30">
@@ -109,7 +109,7 @@ const AIConsolePage = () => {
             )}
           </div>
         );
-      
+
       case 'alpha':
         return (
           <div className="space-y-6">
@@ -123,7 +123,7 @@ const AIConsolePage = () => {
             </div>
             <AgentXPBar agentId="alpha-agent" />
             <N8nAgentTrigger agentId={selectedAgent} agentName={agent?.name || 'Crypto Alpha Assistant'} />
-            
+
             {/* Sub-Agents */}
             {agent?.subAgents && agent.subAgents.length > 0 && (
               <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/30">
@@ -139,13 +139,13 @@ const AIConsolePage = () => {
             )}
           </div>
         );
-      
+
       case 'custom':
         return (
           <div className="space-y-6">
             <CustomAgentCreator />
             <N8nAgentTrigger agentId={selectedAgent} agentName={agent?.name || 'Custom Agent'} />
-            
+
             {/* Sub-Agents for Custom Agent (if any) */}
             {agent?.subAgents && agent.subAgents.length > 0 && (
               <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/30">
@@ -161,7 +161,7 @@ const AIConsolePage = () => {
             )}
           </div>
         );
-      
+
       default:
         // Fallback for unknown tabs
         return (
@@ -187,8 +187,8 @@ const AIConsolePage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Agent Switcher */}
         <div className="mb-8">
-          <AgentSwitcher 
-            selectedAgent={selectedAgent} 
+          <AgentSwitcher
+            selectedAgent={selectedAgent}
             onAgentChange={setSelectedAgent}
           />
         </div>
