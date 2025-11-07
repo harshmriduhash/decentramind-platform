@@ -41,7 +41,7 @@ const PatientChat: React.FC<PatientChatProps> = ({ hospitalSlug }) => {
         'I\'ve noted your symptoms. Would you like me to schedule an appointment?',
         'Thank you for sharing that information. Here\'s what I suggest...'
       ];
-      
+
       const agentResponse = {
         id: messages.length + 2,
         text: responses[Math.floor(Math.random() * responses.length)],
@@ -90,15 +90,13 @@ const PatientChat: React.FC<PatientChatProps> = ({ hospitalSlug }) => {
               animate={{ opacity: 1, y: 0 }}
               className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
-                msg.sender === 'user'
+              <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${msg.sender === 'user'
                   ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
                   : 'bg-slate-700/50 text-gray-100'
-              }`}>
-                <p className="text-sm">{msg.text}</p>
-                <p className={`text-xs mt-1 ${
-                  msg.sender === 'user' ? 'text-blue-100' : 'text-gray-400'
                 }`}>
+                <p className="text-sm">{msg.text}</p>
+                <p className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-blue-100' : 'text-gray-400'
+                  }`}>
                   {msg.timestamp}
                 </p>
               </div>
