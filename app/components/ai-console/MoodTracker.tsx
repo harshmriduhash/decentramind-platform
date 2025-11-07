@@ -84,7 +84,7 @@ const MoodTracker: React.FC = () => {
     const date = new Date(timestamp);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return 'Just now';
     if (diffInHours < 24) return `${diffInHours}h ago`;
     return date.toLocaleDateString();
@@ -136,11 +136,10 @@ const MoodTracker: React.FC = () => {
                     <motion.button
                       key={mood.id}
                       onClick={() => handleMoodSelect(mood.id)}
-                      className={`p-3 rounded-lg border transition-all duration-200 ${
-                        selectedMood === mood.id
+                      className={`p-3 rounded-lg border transition-all duration-200 ${selectedMood === mood.id
                           ? `bg-gradient-to-r ${mood.color} text-white border-transparent`
                           : 'bg-slate-700/30 border-slate-600/30 text-gray-300 hover:bg-slate-600/50'
-                      }`}
+                        }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -168,11 +167,10 @@ const MoodTracker: React.FC = () => {
                 <motion.button
                   onClick={handleAddMood}
                   disabled={!selectedMood}
-                  className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
-                    selectedMood
+                  className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${selectedMood
                       ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white hover:from-emerald-600 hover:to-teal-700'
                       : 'bg-slate-700 text-gray-500 cursor-not-allowed'
-                  }`}
+                    }`}
                   whileHover={selectedMood ? { scale: 1.05 } : {}}
                   whileTap={selectedMood ? { scale: 0.95 } : {}}
                 >
