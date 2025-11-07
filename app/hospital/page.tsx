@@ -57,13 +57,13 @@ const HospitalHubPage: React.FC = () => {
   };
 
   const cardVariants = {
-    hidden: { 
-      opacity: 0, 
+    hidden: {
+      opacity: 0,
       y: 30,
       scale: 0.95
     },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       scale: 1,
       transition: {
@@ -80,8 +80,8 @@ const HospitalHubPage: React.FC = () => {
       <div className="bg-slate-800/30 backdrop-blur-sm border-b border-slate-700/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex items-center space-x-2 text-sm" aria-label="Breadcrumb">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="text-gray-400 hover:text-white transition-colors duration-200"
             >
               Home
@@ -112,7 +112,7 @@ const HospitalHubPage: React.FC = () => {
               </p>
             </div>
           </div>
-          
+
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -135,7 +135,7 @@ const HospitalHubPage: React.FC = () => {
             <motion.div
               key={feature.id}
               variants={cardVariants}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.05,
                 transition: { duration: 0.2 }
               }}
@@ -145,7 +145,7 @@ const HospitalHubPage: React.FC = () => {
                 <div className="relative bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 h-full">
                   {/* Gradient Overlay */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300`}></div>
-                  
+
                   {/* Card Content */}
                   <div className="relative z-10">
                     {/* Icon */}

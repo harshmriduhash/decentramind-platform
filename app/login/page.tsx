@@ -5,12 +5,12 @@ import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useRoleCheck } from '../hooks/useRoleCheck';
 import { nftOwnershipService, UserRole } from '../services/nftOwnershipService';
-import { 
-  LogIn, 
-  Wallet, 
-  Shield, 
-  Stethoscope, 
-  Heart, 
+import {
+  LogIn,
+  Wallet,
+  Shield,
+  Stethoscope,
+  Heart,
   Crown,
   ArrowRight,
   CheckCircle,
@@ -22,11 +22,11 @@ import {
 const SecureLoginPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { signInWithWallet, signOut, isLoading } = useRoleCheck({ 
-    requiredRole: 'guest', 
-    allowUnauthorized: true 
+  const { signInWithWallet, signOut, isLoading } = useRoleCheck({
+    requiredRole: 'guest',
+    allowUnauthorized: true
   });
-  
+
   const [walletAddress, setWalletAddress] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -42,15 +42,15 @@ const SecureLoginPage: React.FC = () => {
   const connectWallet = async () => {
     setIsConnecting(true);
     setError(null);
-    
+
     try {
       // Simulate wallet connection
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock wallet address (in production, get from wallet adapter)
       const mockWalletAddress = '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM';
       setWalletAddress(mockWalletAddress);
-      
+
       // Verify NFT ownership
       await verifyNFTOwnership(mockWalletAddress);
     } catch (error) {
@@ -64,14 +64,14 @@ const SecureLoginPage: React.FC = () => {
   const verifyNFTOwnership = async (address: string) => {
     setIsVerifying(true);
     setError(null);
-    
+
     try {
       // Get user role from NFT ownership
       const role = await nftOwnershipService.getUserRoleFromNFTs(address);
-      
+
       // Get all role NFTs
       const roleNFTs = await nftOwnershipService.getAllRoleNFTs(address);
-      
+
       setVerificationResult({
         role,
         nfts: roleNFTs.map(nft => ({ mint: nft.mint, role: nft.role }))
@@ -86,7 +86,7 @@ const SecureLoginPage: React.FC = () => {
 
   const handleSignIn = async () => {
     if (!walletAddress || !verificationResult) return;
-    
+
     try {
       await signInWithWallet(walletAddress);
       router.push(fromPath);
@@ -174,7 +174,7 @@ const SecureLoginPage: React.FC = () => {
           {/* Wallet Connection Section */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-white mb-6 text-center">Connect Your Wallet</h2>
-            
+
             {!walletAddress ? (
               <div className="text-center">
                 <motion.button
@@ -182,11 +182,10 @@ const SecureLoginPage: React.FC = () => {
                   whileTap={{ scale: 0.98 }}
                   onClick={connectWallet}
                   disabled={isConnecting}
-                  className={`flex items-center justify-center space-x-3 px-8 py-4 rounded-xl font-semibold transition-all duration-300 ${
-                    isConnecting
+                  className={`flex items-center justify-center space-x-3 px-8 py-4 rounded-xl font-semibold transition-all duration-300 ${isConnecting
                       ? 'bg-gray-500/50 text-gray-400 cursor-not-allowed'
                       : 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white hover:shadow-lg hover:shadow-blue-500/25'
-                  }`}
+                    }`}
                 >
                   {isConnecting ? (
                     <>
@@ -201,7 +200,7 @@ const SecureLoginPage: React.FC = () => {
                     </>
                   )}
                 </motion.button>
-                
+
                 <p className="text-gray-400 text-sm mt-4">
                   Connect your Solana wallet to verify NFT ownership and access your role
                 </p>
@@ -223,7 +222,7 @@ const SecureLoginPage: React.FC = () => {
                     Disconnect
                   </button>
                 </div>
-                
+
                 <div className="flex items-center space-x-4">
                   <button
                     onClick={() => verifyNFTOwnership(walletAddress)}
@@ -247,13 +246,13 @@ const SecureLoginPage: React.FC = () => {
               className="mb-8"
             >
               <h3 className="text-xl font-bold text-white mb-4 text-center">NFT Verification Results</h3>
-              
+
               {verificationResult.nfts.length > 0 ? (
                 <div className="space-y-4">
                   {verificationResult.nfts.map((nft, index) => {
                     const roleInfo = getRoleInfo(nft.role);
                     const Icon = roleInfo.icon;
-                    
+
                     return (
                       <div
                         key={index}
@@ -273,7 +272,7 @@ const SecureLoginPage: React.FC = () => {
                       </div>
                     );
                   })}
-                  
+
                   {/* Sign In Button */}
                   <div className="text-center pt-4">
                     <motion.button
@@ -281,11 +280,10 @@ const SecureLoginPage: React.FC = () => {
                       whileTap={{ scale: 0.98 }}
                       onClick={handleSignIn}
                       disabled={isLoading}
-                      className={`flex items-center justify-center space-x-3 px-8 py-4 rounded-xl font-semibold transition-all duration-300 mx-auto ${
-                        isLoading
+                      className={`flex items-center justify-center space-x-3 px-8 py-4 rounded-xl font-semibold transition-all duration-300 mx-auto ${isLoading
                           ? 'bg-gray-500/50 text-gray-400 cursor-not-allowed'
                           : 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white hover:shadow-lg hover:shadow-green-500/25'
-                      }`}
+                        }`}
                     >
                       {isLoading ? (
                         <>
@@ -344,7 +342,7 @@ const SecureLoginPage: React.FC = () => {
               <h4 className="text-blue-400 font-semibold">Security Notice</h4>
             </div>
             <p className="text-blue-300 text-sm">
-              Your wallet connection is secure and your private keys never leave your device. 
+              Your wallet connection is secure and your private keys never leave your device.
               We only verify NFT ownership to determine your access level.
             </p>
           </div>
