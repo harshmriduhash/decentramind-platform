@@ -70,13 +70,12 @@ const AgentQuickActions: React.FC<AgentQuickActionsProps> = ({ agentId }) => {
         <motion.button
           onClick={handleMintAgent}
           disabled={agent.isMinted || isLoading}
-          className={`p-4 rounded-lg border transition-all duration-200 ${
-            agent.isMinted
+          className={`p-4 rounded-lg border transition-all duration-200 ${agent.isMinted
               ? 'bg-emerald-400/10 border-emerald-400/30 text-emerald-400 cursor-not-allowed'
               : isLoading
-              ? 'bg-blue-400/10 border-blue-400/30 text-blue-400 cursor-not-allowed'
-              : 'bg-gradient-to-r from-purple-500 to-blue-600 text-white hover:from-purple-600 hover:to-blue-700 border-purple-500/30'
-          }`}
+                ? 'bg-blue-400/10 border-blue-400/30 text-blue-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-purple-500 to-blue-600 text-white hover:from-purple-600 hover:to-blue-700 border-purple-500/30'
+            }`}
           whileHover={!agent.isMinted && !isLoading ? { scale: 1.05 } : {}}
           whileTap={!agent.isMinted && !isLoading ? { scale: 0.95 } : {}}
         >
