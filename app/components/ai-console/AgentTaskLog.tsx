@@ -11,10 +11,10 @@ interface AgentTaskLogProps {
 const AgentTaskLog: React.FC<AgentTaskLogProps> = ({ agentId }) => {
   const agent = getAgentById(agentId);
   const [filter, setFilter] = useState<'all' | 'completed' | 'in-progress' | 'failed'>('all');
-  
+
   if (!agent) return null;
 
-  const filteredTasks = agent.recentTasks.filter(task => 
+  const filteredTasks = agent.recentTasks.filter(task =>
     filter === 'all' || task.status === filter
   );
 
@@ -42,7 +42,7 @@ const AgentTaskLog: React.FC<AgentTaskLogProps> = ({ agentId }) => {
     const date = new Date(timestamp);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return 'Just now';
     if (diffInHours < 24) return `${diffInHours}h ago`;
     return date.toLocaleDateString();
@@ -64,7 +64,7 @@ const AgentTaskLog: React.FC<AgentTaskLogProps> = ({ agentId }) => {
               <p className="text-sm text-gray-400">{agent.recentTasks.length} recent tasks</p>
             </div>
           </div>
-          
+
           {/* Filter Buttons */}
           <div className="flex space-x-2">
             {[
@@ -76,11 +76,10 @@ const AgentTaskLog: React.FC<AgentTaskLogProps> = ({ agentId }) => {
               <motion.button
                 key={filterOption.id}
                 onClick={() => setFilter(filterOption.id as any)}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  filter === filterOption.id
+                className={`px-3 py-1 rounded-lg text-sm font-medium transition-all duration-200 ${filter === filterOption.id
                     ? 'bg-slate-700 text-white'
                     : 'text-gray-400 hover:text-white hover:bg-slate-700/50'
-                }`}
+                  }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
