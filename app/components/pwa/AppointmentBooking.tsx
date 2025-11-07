@@ -69,11 +69,11 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({ hospitalSlug })
       alert('Please fill in all required fields');
       return;
     }
-    
+
     // Simulate booking process
     console.log('Booking appointment:', { ...bookingForm, date: selectedDate });
     alert('Appointment booked successfully! You will receive a confirmation email shortly.');
-    
+
     // Reset form
     setBookingForm({
       patientName: '',
@@ -227,7 +227,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({ hospitalSlug })
           className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/30"
         >
           <h3 className="text-lg font-semibold text-white mb-4">Schedule Appointment</h3>
-          
+
           {/* Date Picker */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -255,11 +255,10 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({ hospitalSlug })
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleInputChange('time', slot)}
-                    className={`p-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-                      bookingForm.time === slot
+                    className={`p-2 rounded-lg text-sm font-medium transition-all duration-300 ${bookingForm.time === slot
                         ? 'bg-purple-500 text-white'
                         : 'bg-slate-700/50 text-gray-300 hover:bg-slate-600/50'
-                    }`}
+                      }`}
                   >
                     {slot}
                   </motion.button>
