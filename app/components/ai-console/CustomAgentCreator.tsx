@@ -34,7 +34,7 @@ const CustomAgentCreator: React.FC = () => {
   const [newCapability, setNewCapability] = useState('');
 
   const domainOptions = [
-    'Finance', 'Healthcare', 'Education', 'Marketing', 'Development', 
+    'Finance', 'Healthcare', 'Education', 'Marketing', 'Development',
     'Design', 'Writing', 'Research', 'Customer Service', 'Sales'
   ];
 
@@ -86,12 +86,12 @@ const CustomAgentCreator: React.FC = () => {
   const calculatePricing = () => {
     const baseCost = 100;
     const capabilityCost = formData.capabilities.length * 25;
-    const domainMultiplier = formData.domain === 'Finance' ? 1.5 : 
-                           formData.domain === 'Healthcare' ? 1.3 : 1.0;
-    
+    const domainMultiplier = formData.domain === 'Finance' ? 1.5 :
+      formData.domain === 'Healthcare' ? 1.3 : 1.0;
+
     const mintCost = Math.round((baseCost + capabilityCost) * domainMultiplier);
     const monthlyFee = Math.round(mintCost * 0.25);
-    
+
     return { mintCost, monthlyFee };
   };
 
@@ -123,7 +123,7 @@ const CustomAgentCreator: React.FC = () => {
 
       await mintAgent('custom', agentData);
       showToast(`${formData.name} created successfully!`, 'success');
-      
+
       // Reset form
       setFormData({
         name: '',
@@ -171,7 +171,7 @@ const CustomAgentCreator: React.FC = () => {
             {/* Basic Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white">Basic Information</h3>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Agent Name *
@@ -234,7 +234,7 @@ const CustomAgentCreator: React.FC = () => {
             {/* Capabilities */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white">Capabilities</h3>
-              
+
               <div className="flex space-x-2">
                 <input
                   type="text"
@@ -279,7 +279,7 @@ const CustomAgentCreator: React.FC = () => {
           {/* Preview & Pricing */}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-white">Preview & Pricing</h3>
-            
+
             {/* Agent Preview */}
             <div className="bg-slate-700/30 rounded-lg p-6 border border-slate-600/30">
               <div className="text-center mb-4">
@@ -293,11 +293,11 @@ const CustomAgentCreator: React.FC = () => {
                   {formData.domain || 'Domain'} • {formData.personality || 'Personality'}
                 </p>
               </div>
-              
+
               <p className="text-gray-300 text-sm mb-4">
                 {formData.description || 'Agent description will appear here...'}
               </p>
-              
+
               <div className="space-y-2">
                 <div className="text-sm text-gray-400">Capabilities:</div>
                 <div className="flex flex-wrap gap-1">
@@ -339,11 +339,10 @@ const CustomAgentCreator: React.FC = () => {
             <motion.button
               onClick={handleCreateAgent}
               disabled={isCreating || !formData.name || !formData.domain || !formData.description || !formData.personality}
-              className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 ${
-                isCreating || !formData.name || !formData.domain || !formData.description || !formData.personality
+              className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-200 ${isCreating || !formData.name || !formData.domain || !formData.description || !formData.personality
                   ? 'bg-slate-700 text-gray-500 cursor-not-allowed'
                   : 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700'
-              }`}
+                }`}
               whileHover={
                 !isCreating && formData.name && formData.domain && formData.description && formData.personality
                   ? { scale: 1.02 }
