@@ -11,7 +11,7 @@ interface InsightsPanelProps {
 const InsightsPanel: React.FC<InsightsPanelProps> = ({ agentId }) => {
   const agent = getAgentById(agentId);
   const [activeInsight, setActiveInsight] = useState(0);
-  
+
   if (!agent) return null;
 
   const getInsightIcon = (type: string) => {
@@ -77,11 +77,10 @@ const InsightsPanel: React.FC<InsightsPanelProps> = ({ agentId }) => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ delay: index * 0.1 }}
-                  className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 ${
-                    activeInsight === index
+                  className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 ${activeInsight === index
                       ? 'bg-gradient-to-r from-slate-700/50 to-slate-600/30 border-slate-500/50'
                       : 'bg-slate-700/30 border-slate-600/30 hover:bg-slate-700/50'
-                  }`}
+                    }`}
                   onClick={() => setActiveInsight(index)}
                 >
                   <div className="flex items-start space-x-3">
