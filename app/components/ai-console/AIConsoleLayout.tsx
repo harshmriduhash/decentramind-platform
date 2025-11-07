@@ -46,13 +46,13 @@ const AIConsoleLayout: React.FC<AIConsoleLayoutProps> = ({
     // Check if wallet was previously connected in localStorage
     const wasConnected = localStorage.getItem('decentramind_wallet_connected') === 'true';
     const savedAddress = localStorage.getItem('decentramind_wallet_address');
-    
+
     // If we have a saved connection but wallet isn't connected yet, wait a bit longer
     if (wasConnected && savedAddress && !isConnected && !isLoading) {
       const extendedTimer = setTimeout(() => {
         setIsInitialized(true);
       }, 2000);
-      
+
       return () => clearTimeout(extendedTimer);
     }
   }, [isConnected, isLoading]);
@@ -206,11 +206,10 @@ const AIConsoleLayout: React.FC<AIConsoleLayoutProps> = ({
               <motion.button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
-                className={`relative px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-                  activeTab === tab.id
+                className={`relative px-6 py-3 rounded-lg font-medium transition-all duration-300 ${activeTab === tab.id
                     ? `bg-gradient-to-r from-${tab.color}-500 to-${tab.color}-600 text-white shadow-lg shadow-${tab.color}-500/25`
                     : 'text-gray-400 hover:text-white hover:bg-slate-700/50'
-                }`}
+                  }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
