@@ -10,7 +10,7 @@ interface AgentXPBarProps {
 
 const AgentXPBar: React.FC<AgentXPBarProps> = ({ agentId }) => {
   const agent = getAgentById(agentId);
-  
+
   if (!agent) return null;
 
   const xpProgress = (agent.xp % 1000) / 10; // Progress to next level
