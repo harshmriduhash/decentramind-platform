@@ -146,11 +146,10 @@ const N8nAgentTrigger: React.FC<N8nAgentTriggerProps> = ({ agentId, agentName })
         <motion.button
           onClick={handleTrigger}
           disabled={isLoading}
-          className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-300 ${
-            isLoading
+          className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-300 ${isLoading
               ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
               : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white'
-          }`}
+            }`}
           whileHover={!isLoading ? { scale: 1.02 } : {}}
           whileTap={!isLoading ? { scale: 0.98 } : {}}
         >
