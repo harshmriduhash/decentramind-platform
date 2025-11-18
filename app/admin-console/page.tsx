@@ -196,4 +196,5 @@ const AdminConsolePage = () => {
   );
 };
 
+
 export default AdminConsolePage;
